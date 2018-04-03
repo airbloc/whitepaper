@@ -214,7 +214,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 ## 데이터 파이프라인 개요
 
-<p align="center"><img src="./assets/ecosystem-horiz-detailed.png" width=700></p>
+<p align="center"><img src="./assets/ecosystem-horiz-detailed.png" width=800></p>
 
 에어블록에서의 데이터는 다섯 주체를 거치며 일곱 과정의 SOIPRTC 파이프라인 (Source - cOllection - Ingestion - Persistence - Refining - Trading - Consumption)을 통해 컨슈머에게 전달된다. 사용자가 만든 데이터는 수집자에 의해 수집되어, 검증자의 정제 (Cleansing) 후 수집자가 저장한다. 가공자는 이를 가공해 마켓에서 데이터를 컨슈머에게 판매하게 된다. 
 
