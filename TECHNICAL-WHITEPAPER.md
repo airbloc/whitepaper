@@ -15,41 +15,41 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 ## 목차
 
-* [문제의식]()
-* [광고 생태계의 혁신, 에어블록]()
-    * [참여 주체]()
-    * [아키텍쳐]()
-    * [탈중앙화에 따른 특징]()
-* [데이터]()
-    * [종류]()
-    * [구성 요소]()
-    * [데이터에 대한 권리]()
-* [데이터 파이프라인]()
-    * [데이터 수집]()
-        * [DAuth]()
-        * [데이터 캠페인]()
-    * [데이터 올리기 (Data Ingestion)]()
-    * [데이터 가공자 (Data Refinery)]()
-    * [마켓플레이스]()
-        * [판매 방식]()
-        * [가격 책정 방식]()
-* [에어블록 토큰 경제 구조]()
-    * [에어블록 토큰 (ABL)]()
-    * [에어블록 리워드 (AIR)]()
-    * [AIR Pool](#air-pool)
-* [신뢰할 수 있는 네트워크]()
-    * [신뢰도 검증 시스템]()
-        * [개인 신원 확인]()
-        * [사기 탐지 시스템]()
-        * [개인 평가]()
-        * [데이터 교차 검증]()
-        * [데이터 신뢰도 마이닝]()
-    * [Aero 네트워크]()
-* [추가적으로 다뤄질 내용 (TBD)]()
-* [참고문헌]()
-* [부록 (Appendix)]()
-    * [고려사항 및 FAQ]()
-    * [직접 데이터 공학]()
+* [문제의식](#문제의식)
+* [광고 생태계의 혁신, 에어블록](#에어블록이란)
+    * [참여 주체](#참여-주체)
+    * [아키텍쳐](#아키텍쳐)
+    * [탈중앙화에 따른 특징](#탈중앙화에-따른-특징)
+* [데이터](#데이터)
+    * [종류](#종류)
+    * [구성 요소](#구성-요소)
+    * [데이터에 대한 권리](#데이터에-대한-권리)
+* [데이터 파이프라인](#데이터-파이프라인)
+    * [데이터 수집](#데이터-수집)
+        * [DAuth](#dauth)
+        * [데이터 캠페인](#데이터-캠페인)
+    * [데이터 올리기 (Data Ingestion)](#데이터-올리기-data-ingestion-1)
+    * [데이터 가공자 (Data Refinery)](#데이터-가공자-data-refinery)
+    * [마켓플레이스](#마켓플레이스)
+        * [판매 방식](#판매-방식)
+        * [가격 책정 방식](#가격-책정-방식)
+* [에어블록 토큰 경제 구조](#에어블록의-토큰-경제)
+    * [에어블록 토큰 (ABL)](#에어블록-abl-토큰)
+    * [에어블록 리워드 (AIR)](#에어블록-리워드-air-토큰)
+    * [AIR Pool](#air-pool-에어블록-리워드-풀)
+* [신뢰할 수 있는 네트워크](#신뢰도-검증-시스템)
+    * [신뢰도 검증 시스템](#신뢰도-검증-시스템)
+        * [개인에 대한 신원 인증](#개인에-대한-신원-인증-individual-user-identification)
+        * [사기 탐지 시스템](#사기-탐지-시스템-fraud-detection-system)
+        * [개인 평가](#개인-평가-personal-evaluation)
+        * [데이터 교차 검증](#데이터-교차검증-data-cross-validation)
+        * [데이터 신뢰도 마이닝](#데이터-신뢰도-마이닝-data-reliability-mining)
+    * [Aero 네트워크](#aero-네트워크)
+* [추가적으로 다뤄질 내용 (TBD)](#추가적으로-다뤄질-내용-tbd-to-be-described)
+* [참고문헌](#참고문헌)
+* [부록 (Appendix)](#부록-appendix)
+    * [고려사항](#고려사항)
+    * [직접 데이터 공학](#직접-데이터-공학)
 
 
 ## 문제의식
@@ -342,7 +342,7 @@ DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/k
 
 에어블록은 이처럼 익명화된 데이터 유통을 통해 데이터 이스케이핑(Data Escaping) 등 데이터에 대한 값을 제대로 지불하지지 않고 데이터의 가치를 유출시키는 행위를 방지합니다.
 
-## 가공자 (Refinery)
+## 데이터 가공자 (Data Refinery)
 위와 같은 수집 과정을 통해 수집된 사용자의 데이터는 그 자체만으로 큰 가치가 발생하지는 않습니다. 가공하지 않은 Raw 데이터는 상대적으로 낮은 신뢰성과 높은 노이즈를 지니고 있으며, 도메인에 특화된 데이터이기 때문에 그 활용이 제한적입니다. 따라서 광고주가 데이터를 사용하려면 Raw 데이터를 가공하여 광고에 사용되기 용이한 개인 데이터나, 사용자의 예상 구매율 및 재방문율 등의 인사이트 데이터로 바꿔주는 가공 과정이 필요합니다.
 
 에어블록에서의 데이터 가공 과정은 가공자가 수행합니다. 가공자는 데이터 사용권을 가지는 데이터 가공 주체들로서, 광고 데이터 분석 업체들에 의해 운영되는 자동화된 데이터 분석 엔진이 될 것입니다. 가공자는 어떤 개인에 대해 수집자가 모은 데이터를 가공해, 뒤에 서술될 인사이트 마켓 및 개인 데이터 마켓에서 컨슈머에게 가공한 데이터를 판매하고 인센티브를 얻습니다.
@@ -588,7 +588,8 @@ TO REAL WORLD
 Intelligence and Preventing Overfitting.
 - [[7]](https://enigma.co/enigma_full.pdf) Zyskind, Nathan, Pentland. Enigma: Decentralized Computation Platform with
 Guaranteed Privacy
-
+- [[8]](https://github.com/ethereum/EIPs/issues/859) Vitalik Buterin. EIP 859 - Account abstraction for main chain
+- [[9]](https://eos.io/documents/EOS_An_Introduction.pdf) Ian Grigg. EOS - An Introduction
 
 부록 (Appendix)
 ========
