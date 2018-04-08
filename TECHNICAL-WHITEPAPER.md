@@ -1,305 +1,293 @@
-Airbloc Technical Whitepaper
+Airbloc Technical White Paper
 =================
 
-Hyojun Kim [hyojun@airbloc.org]()  
-Byeongsu Hong [frostornge@airbloc.org]()
+*Hyojun Kim* [hyojun@airbloc.org]()  
+*Byeongsu Hong* [frostornge@airbloc.org]()
 
-**Version 1** First published on April 4, 2018. 
-
-**요약** : 에어블록은 내 데이터로 보상을 얻을 수 있는 탈중앙화된 광고 데이터 거래 네트워크입니다.  
-에어블록에서 간접 데이터는 에어블록이 직접 개발하거나 데이터 파트너십을 맺은 앱들로부터 개인 사용자가 직접 DAuth로 동의하면 수집되며, 직접 데이터는 에어블록 클라이언트 앱에서 광고주가 데이터 캠페인을 통해 사용자에게 직접 질문하는 방식으로 수집됩니다. 이렇게 수집된 데이터는 가공자를 통해 광고 데이터의 형태로 가공되어 광고주에게 판매되고, 개인 사용자에게 데이터 판매금의 일부가 보상으로 지급됩니다. 이렇게 개인 사용자는 데이터 제공자로서 데이터에 대한 정당한 보상과 통제권으로 자신의 데이터에 대한 주권을 가질 수 있고, 앱사는 정당하게 수집한 데이터를 수익화해 사용자와 보상을 나눠가질 수 있으며, 광고주는 개인에 대한 정확한 관심 데이터를 통해 보다 효율적인 광고를 집행할 수 있습니다.
-
+**Version 1.1** First published on April 9, 2018.  
 Copyright © 2018 Airbloc Foundation. All rights are reserved.
 
 Without permission, anyone may use, reproduce or distribute any material in this paper for non-commercial and educational use (i.e., other than for a fee or for commercial purposes) provided that the original source and the applicable copyright notice are cited.
 
-## 목차
+## Table of Contents
 
-* [문제의식](#문제의식)
-* [광고 생태계의 혁신, 에어블록](#에어블록이란)
-    * [참여 주체](#참여-주체)
-    * [아키텍쳐](#아키텍쳐)
-    * [탈중앙화에 따른 특징](#탈중앙화에-따른-특징)
-* [데이터](#데이터)
-    * [종류](#종류)
-    * [구성 요소](#구성-요소)
-    * [데이터에 대한 권리](#데이터에-대한-권리)
-* [데이터 파이프라인](#데이터-파이프라인)
-    * [데이터 수집](#데이터-수집)
+* [Introduction](#introduction)
+* [Airbloc](#airbloc)
+    * [Stakeholders](#stakeholders)
+    * [Architecture](#architecture)
+    * [Why Blockchain?](#why-blockchain)
+* [Data](#data)
+    * [Types](#types)
+    * [Components](#components)
+    * [Rights on Data](#rights-on-data)
+* [Data Pipeline](#data-pipeline)
+    * [Data Collection](#data-collection)
         * [DAuth](#dauth)
-        * [데이터 캠페인](#데이터-캠페인)
-    * [데이터 올리기 (Data Ingestion)](#데이터-올리기-data-ingestion-1)
-    * [데이터 가공자 (Data Refinery)](#데이터-가공자-data-refinery)
-    * [마켓플레이스](#마켓플레이스)
-        * [판매 방식](#판매-방식)
-        * [가격 책정 방식](#가격-책정-방식)
-* [에어블록 토큰 경제 구조](#에어블록의-토큰-경제)
-    * [에어블록 토큰 (ABL)](#에어블록-abl-토큰)
-    * [에어블록 리워드 (AIR)](#에어블록-리워드-air-토큰)
-    * [AIR Pool](#air-pool-에어블록-리워드-풀)
-* [신뢰할 수 있는 네트워크](#신뢰도-검증-시스템)
-    * [신뢰도 검증 시스템](#신뢰도-검증-시스템)
-        * [개인에 대한 신원 인증](#개인에-대한-신원-인증-individual-user-identification)
-        * [사기 탐지 시스템](#사기-탐지-시스템-fraud-detection-system)
-        * [개인 평가](#개인-평가-personal-evaluation)
-        * [데이터 교차 검증](#데이터-교차검증-data-cross-validation)
-        * [데이터 신뢰도 마이닝](#데이터-신뢰도-마이닝-data-reliability-mining)
-    * [Aero 네트워크](#aero-네트워크)
-* [추가적으로 다뤄질 내용 (TBD)](#추가적으로-다뤄질-내용-tbd-to-be-described)
-* [참고문헌](#참고문헌)
-* [부록 (Appendix)](#부록-appendix)
-    * [고려사항](#고려사항)
-    * [직접 데이터 공학](#직접-데이터-공학)
+        * [Data Campaign](#data-campaign)
+    * [Data Ingestion](#data-ingestion)
+    * [Data Refinery](#data-refinery)
+    * [Marketplace](#marketplace)
+        * [Sale Methods](#sale-methods)
+        * [Pricing](#pricing)
+* [Airbloc Token Economics](#airbloc-token-economics)
+    * [Airbloc Token (ABL)](#airbloc-token-abl)
+    * [Airbloc Reward (AIR)](#airbloc-reward-air)
+    * [AIR Pool](#air-pool)
+* [Reliability Proof System](#reliability-proof-system)
+    * [Personal Identification](#personal-identification-kyc)
+    * [Automated Fraud Detection](#automated-fraud-detection)
+    * [Personal Evaluation](#personal-evaluation)
+    * [Data Cross-Validation](#data-cross-validation)
+    * [Data Reliability Mining](#data-reliability-mining)
+* [Aero Network](#aero-network)
+* [To Be Described (TBD)](#to-be-described-tbd)
+* [Citations](#citations)
+* [Appendix](#appendix)
+    * [Considerations](#considerations)
+    * [Direct Data Engineering](#direct-data-engineering)
 
 
-## 문제의식
+## Introduction
+At this moment, the data market is dominantly controlled by centralized services a.k.a “walled gardens” and big data brokers who aggregate data to sell off insights to large enterprises to generate huge revenues. 
 
-### 개인의 데이터 권리 침해
+Under this market status, most Data Suppliers are completely alienated from the market. To individual, who is the original data source, neither fair rewards nor data ownership is granted. Likewise, small Apps with insufficient number of customers can’t sell and monetize their customers’ data. Only Apps with sufficient number of customer data are eligible for limited market participation to sell data in turn-key.  
 
-이제 광고기술 시장에서 ‘데이터’는 하나의 전략적 무기입니다.
+Meanwhile, from the Data Consumer’s side, small enterprises are often barred from data purchase, even in little amount. Similarly, large enterprises within the legal jurisdiction, can only access market trends, and they can’t execute micro-targeting techniques which are highly effective for running ad campaigns. 
 
-광고를 보다 효율적으로 집행하기 위해 개인 데이터를 활용하여 ‘내 제품을 살 만한 사람들에게만 광고하는’ 타겟팅 광고 상품은 구글과 페이스북, 그리고 각국의 대표 검색엔진 등 거대 IT 기업들의 주요 수익화 방법입니다. 이 기업들은 ‘개인의 관심데이터’를 활용하여 광고를 노출하고 개인들이 이 광고를 선택하거나, 심지어 보기만 하더라도 광고 수익을 얻게 됩니다.
+Via Airbloc, Users can directly submit data to the blockchain-based data supply chain. Users can track and control  data transactions, as well as monetize their own data. Through DAuth protocol on Airbloc, Apps can get permission from Users and sell data on behalf of them. Also, Advertisers can easily purchase and access small amount of data, and optimize their marketing campaigns by running effective micro-targeting based on high-quality and diverse set of user interest data. 
 
-하지만 ‘개인 관심데이터’를 제공하는 주체인 ‘개인’에게는 타겟팅 광고 매출의 1원도 돌아가지 않는 것이 현실입니다. 자신들에게서 어떠한 데이터가 수집되어 어떠한 가치로 매겨지는지, 누구에게 판매되는지도 전혀 알 수 없습니다. 심지어 데이터는 기업의 약관 변경등을 통해 원하지 않은 방식으로 수집되어 원하지 않는 주체에 판매되기도 합니다.
-
-### 광고주의 비효율적인 타겟팅 광고 
-
-개인으로부터 무단으로 수집되는 간접데이터 기반의 타겟팅 광고가 무조건 높은 광고 효율을 보장하지는 않습니다.
-
-과거에 비해서는 더욱 효율적으로 타겟팅 광고를 할 수 있게 되었지만, 이 데이터가 개인이 직접 제공한 정보가 아닌 간접 제공한 데이터를 기반으로 통계적으로 ‘추측’된 데이터이기 때문입니다.  개인의 관심사를 더 정확하게 알기 위해 더 다양한 종류의 많은 데이터가 필요합니다.
-
-하지만 기업이 수집할 수 있는 데이터에는 한계가 있습니다. 수집할 수 있는 데이터의 모집단이 해당 기업의 서비스로만 한정되기 때문입니다. 때문에 구글과 페이스북과 같은 대형 광고 플랫폼을 사용하지만, 이 데이터 독과점 플랫폼은 많은 광고주들이 이용할 수록 광고 비용이 상승하는 문제가 있습니다. 광고주들은 광고 효율을 위해 내 제품을 살 만한 잠재고객을 자유롭게 테스트하는 환경이 절실한 상황입니다.
+Our mission at Airbloc is to democratize the data market to the level where individuals and small and medium sized apps can participate, which can improve data by its quality and quantity, so that all market players will eventually benefit from the win-win cycle. 
 
 
-### 광고의 노이즈화
-비효율적인 타겟팅 광고, 개인에게 보고 싶지 않은 광고는 개인에게 노이즈입니다. 개인은 이 노이즈를 제거하기 위해 광고 차단 앱이나 브라우저 익스텐션을 찾습니다. 이러한 현상으로 광고 노출로 수익을 얻는 앱사나 광고시장의 다른 플레이어들은 디지털 광고의 미래를 부정적으로 판단하며 보다 정확한 타겟팅 광고가 필요하다고 주장하지만, 대형 광고 플랫폼의 독과점과 간접 데이터에 의존하는 디지털 광고 등 구조적인 문제가 그 해결을 가로막고 있습니다.
+## Airbloc
 
-## 에어블록이란
-
-에어블록은 탈중앙화된 광고 데이터 거래 플랫폼입니다. 에어블록에서 광고 데이터 수집은 투명하게 이루어집니다. 간접 데이터는 에어블록이 직접 개발하거나 데이터 파트너십을 맺은 앱들로부터 개인 사용자가 직접 DAuth로 동의하는 절차를 거쳐 수집되며, 직접 데이터는 에어블록 클라이언트 앱에서 광고주가 데이터 캠페인을 통해 사용자에게 직접 질문하는 방식으로 수집됩니다. 이렇게 수집된 데이터는 가공자를 통해 광고 데이터의 형태로 가공되어 광고주에게 판매되고, 개인 사용자에게 데이터 판매금의 일부가 보상으로 지급됩니다.
+Airbloc is basically a decentralized ad data exchange platform. Indirect data such as installed apps, app usage history, and GPS are collected via Airbloc’s Main Client Service’s app or via services that use Airbloc’s SDK to get permission from their users with DAuth protocol. The direct data are collected by data campaigns, where advertisers use various question forms to ask for the users’ responses. The collected data will then be sold to the advertisers directly or go through data refineries to add more user-level attributes, either in a raw data format or as a group of identifiers such as ADIDs.
 
 <p align="center"><img src="./assets/ecosystem-horizontal.png" width=720></p>
 
-에어블록에서 **개인 사용자**는 데이터 제공자로서 데이터에 대한 정당한 보상과 통제권으로 자신의 데이터에 대한 주권을 가질 수 있습니다. 제공한 데이터가 어떻게 수집되고 누구에게 판매되며 어떻게 사용되는지 블록체인을 통해 투명하게 추적할 수 있으며, 수집된 데이터의 사용 권한이나 판매 레벨을 직접 제한할 수도 있습니다.
+On Airbloc, **Individual Users** can exercise sovereignty over data as a legitimate data owner and original data source. Airbloc can track the entire record of what data is collected, how it is collected, to whom it is sold, and how it is used. Also, Users can configure permission levels as to what extent their data shall be used. For example, Users can decide for themselves if only a common identifier could be  sold as targets, neither their raw data nor personal profiles.
 
-에어블록은 **앱**들에게 새로운 형태의 수익 모델이 됩니다. 앱사들은 사용자들을 통해 모은 데이터를 대리 판매함으로서 수익을 창출할 수 있습니다. 데이터 판매 수익은 사용자에게 배분되고, [DAuth](#dauth) 과정을 통해 사용자가 동의한 데이터만 수익화할 수 있기 때문에 개인의 데이터 권리를 보장하면서 앱사들은 정당히 수익을 창출할 수 있습니다. 이처럼 에어블록은 앱사들에게 그 자체로 새로운 "데이터 비즈니스" 모델"이 될 수 있습니다.
+Also, **Apps** can monetize their data and share the rewards with the end users. With [DAuth](#dauth), Users can only monetize data that were obtained by user’s permission, and this allows Apps to monetize data while protecting  personal data security. In addition, data monetization serve as an alternative new business model or as a supplement to existing business models to monetize traffic and user clicks and impressions.
 
-에어블록은 **광고주**들에게 고품질의 타겟팅 광고를 집행할 수 있게 해주는 DMP (Data Management Platform)가 될 수 있습니다. 에어블록에는 다양한 앱에서 수집된 많은 종류의 간접 데이터가 있기 때문에 데이터의 모집단을 크게 늘릴 수 있고, 데이터 캠페인을 집행해 사용자에게 직접 질문함으로서 원하는 데이터를 수집할 수도 있습니다. 이로 인해 광고주는 개인에 대해 더 정확하게 알 수 있고, 개인의 관심사를 더 잘 반영한 타겟팅 광고를 집행할 수 있습니다.
+At the same time, **Advertisers** can also optimize ROIs by targeting the potential customers with the quality user-level interest data. Airbloc DMP (Data Management Platform) ensures data quantity which is auto-collected from partner Apps. Also, it can guarantee data quality and diversity with firsthand interest data that were directly surveyed from Users. 
 
-### 참여 주체
+### Stakeholders
 
-에어블록은 데이터에 대한 *프로바이더*, *컨슈머*, *수집자*, *가공자*와 *검증자*의 참여를 통해 이루어집니다.
+Airbloc is run by many participants to the ecosystem, including *Data Provider*, *Data Consumer*, *Data Collector*, *Data Refinery* and *Gatekeeper*.
 
 <p align="center"><img src="./assets/stakeholders.png" width="700px"></p>
 
-* **프로바이더 (Provider)** 는 데이터를 제공하는 개인 사용자로, 데이터를 제공하고 소비자에게 보상을 받아가며 데이터 사용 및 유통에 대한 통제권을 지닙니다.
-* **수집자 (Collector)** 는 데이터를 수집해 대리 판매하는 앱으로, DAuth를 통해 간접 데이터를 수집하거나 질문을 통해 직접 데이터를 수집합니다.
-* **가공자 (Refiner)** 는 사용자의 직·간접 데이터를 분석하여 관심 데이터로 가공 후 컨슈머에게 판매하는 데이터 분석 엔진 및 관련 업체입니다.
-* **컨슈머 (Consumer)** 는 데이터를 구매하는 광고주로, 타겟팅 광고에 사용할 데이터를 구매하고 그에 대한 보상을 지불합니다.
-* **검증자 (Verifier)** 는 뒤에 서술될 Aero 네트워크의 노드로, 데이터를 관리하고 증명합니다.
+* **Data Providers** are the end Users, the individuals who provide the data and get incentives for the data offering. They have full control over the data usage and circulation.
+* **Gatekeepers** are the node of the Aero network that will be described later. They validates data and prevent frauds to enter the system. 
+* **Data Collectors** are apps that collects data and monetizes data on behalf of users. They can collect indirect data by DAuth or collect direct data by questioning to user directly.
+* **Data Refineries** are responsible for analyzing the given Direct, Indirect Data collected from the Data Providers and refining them into another user-level attribute. Then the refined data are added to the user’s profile so that Data Consumers can filter them by user attributes when making a new segment.
+* **Data Consumers** are the advertisers who purchase data for targeted ads. They will use ABL tokens to purchase and reward data.
 
 
-### 아키텍쳐
+### Architectures
 
+The architecture of Airbloc is composed of multiple layers as below. 
 
-에어블록 아키텍쳐는 다음과 같은 레이어로 구성됩니다.
 
 <img align="right" src="./assets/architecture.png" style="margin:0 0 10px 20px;" width=400>
 
-* Application Layer: 에어블록을 사용하는 Dapp들로 에어블록 클라이언트, 에어블록 마켓플레이스 및 SDK 등이 포함됩니다.
-* API Layer: 에어블록과 통신할 수 있는 API 레이어입니다.
-* Service Layer: 에어블록 컨트랙트로 에어블록의 기능이 서비스 레이어에 구현됩니다.
-* Core Layer: 에어블록의 블록체인 플랫폼으로, Ethereum을 서비스 플랫폼으로 사용하며 Aero라는 자체 데이터 증명 네트워크를 사용하고 두 블록체인을 연동하기 위한 인터체인 플랫폼을 사용합니다.
+* Application Layer: Composed of Dapps that use Airbloc, including Airbloc Client, Airbloc Marketplace, and SDKs.
+* API Layer: An interface provided for the communication with Airbloc.
+* Service Layer: Airbloc Contract that includes the entire features of Airbloc Network.
+* Core Layer: This layer is Airbloc’s blockchain platform based on Ethereum. It adopts Aero, Airbloc’s internal subchain network for data validation, and adopts interchain network to link the two blockchains.
 
-에어블록은 Ethereum을 서비스 플랫폼으로 사용합니다. 따라서 에어블록에서 사용되는 ABL 토큰은 ERC20 표준을 따르며, 에어블록 컨트랙트는 EVM 위에서 스마트 컨트랙트로 구동됩니다. 블록체인 플랫폼은 추후 에어블록의 기술적 요구사항에 의해 다른 플랫폼으로 변경될 수 있습니다.
+Airbloc’s service platform is topped on Ethereum. Therefore, ABL tokens for Airbloc is based on ERC20 standard and Airbloc contract is mounted on and runs on EVM, as a smart contract. Please note that the platform can be later changed to other platforms due to technical requirements.
 
+### Why Blockchain?
 
-### 탈중앙화에 따른 특징
+Under the centralized system, legal jurisdictions or rules and regulations are usually imposed upon the centralized entity who holds and manages the system. This means that there is no room for checks and balances for other entities within the ecosystem. Unless an eminent situation arises that leads to legal interventions, the system operates in a way that maximizes the revenue of the centralized entity, leaving no preventive mechanism to other entities to ensure a fair system.
 
-중앙화된 시스템에서는 아무리 법적 효력을 가진 약관과 규칙이 있다고 해도 다른 주체들은 중앙 주체를 견제할 수단이 없으며 해당 규칙을 따르는지 감시할 방법 또한 없습니다. 그저 중앙화된 주체와의 이해관계에 의해서만 규칙이 유지되며 시스템에 공정하게 작동하고 유지된다는 보장 장치가 없습니다.
+However, for decentralized systems, rules and regulations are laid out under the smart contract, in a transparent and accessible manner. Hence all participants to the system can be guaranteed with a mutual checks and balances. These systems are designed to strictly abide by the rules, and all actions will be open to the public’s surveillance. If some players doesn’t abide by the rule or attempt to manipulate the system, then they will be penalized financially.
 
-하지만 탈중앙화 시스템에는 스마트 컨트랙트로 명문화된 투명한 규칙 하에 각 참여 주체가 상호견제하는 환경이 조성됩니다. 시스템은 규칙을 따르도록 설계되어 있고, 해당 규칙에 따른 모든 행동은 투명하게 공개되어 감시가 가능해집니다. 규칙을 어기고 어뷰징하는 주체는 경제적 패널티를 얻게 됩니다. 시스템, 그 자체가 시스템이 공정하게 작동하고 유지된다는 보장 장치가 되는 것입니다.
-
-에어블록은 탈중앙화 시스템으로 정해진 규칙에 따른 공정한 데이터 유통을 보장할 수 있습니다. 심지어 에어블록을 운영하는 주체인 에어블록 파운데이션조차 에어블록에서는 참여 주체의 일부이기 때문에, 데이터를 다룰 수 있는 권력은 어느 누구에게 집중되는 것이 아니라 사용자와 기업 모두에게 공평하게 분배될 수 있습니다. 이것이 에어블록이 지향하는 탈중앙화 가치이며, 에어블록이 탈중앙화된 형태를 지니는 이유입니다. 구체적인 특징은 다음과 같습니다.
-
-
-### 데이터의 추적성 (Data Traceability)
-
-에어블록 네트워크 안에서 유통되는 모든 데이터의 활용 과정은 블록체인에 의해 투명하게 추적됩니다.
-
-중앙화된 시스템에서는 사용자의 데이터가 어떻게 수집되고 활용되거나 판매되는지 알 수 없습니다. 중앙화된 시스템이 데이터의 활용 기록을 투명하게 공개한다면 가능하겠지만 이는 중앙화 주체의 선의 및 법적인 동의에 의해서만 이루어지므로 사용자에게 데이터의 추적성을 완전히 보장해주지 않습니다.
-
-하지만 탈중앙화된 에어블록 네트워크에서는 데이터 수집을 DAuth나 데이터 캠페인을 통해 사용자가 컨트롤할 수 있으며, 수집된 개별 데이터의 유통 과정은 블록체인을 통해 투명하게 기록되어 사용자와 광고주는 해당 데이터의 계보(Data Lineage)를 언제든지 확인할 수 있습니다.
-
-중요한 것은 이러한 추적성이 단순히 한 주체의 의지에 의해서만 보장되지 않고 공개된 스마트 컨트랙트와 네트워크상의 상호 견제 설계 구조를 통해 이루어지기 때문에 사용자가 데이터의 추적성을 네트워크 자체에 의해 보장받을 수 있다는 점입니다.
+Airbloc is a decentralized system that guarantees a fair data transaction by rules and regulations. Even the Airbloc’s managing entity, the Airbloc Foundation, are just one out of many players to the ecosystem. The power to handle data is not and should not be yielded to one specific player, but should be equitably distributed to all Users and business entities. This is the ultimate value and reason for decentralization that Airbloc aims to achieve. The specific characteristics of Airbloc are as follows.
 
 
-### 데이터 유통 제한 (Data Distribution Limitation)
+### Data Traceability
 
-에어블록의 가장 큰 특징은 데이터의 생산자인 개인 사용자가 직접 데이터의 유통 과정을 제한할 수 있다는 것입니다. 예를 들어 데이터가 특정 분야의 광고에는 사용될 수 없도록 제한하거나, 데이터가 몇 번 이상 재판매되지 않도록 횟수를 제한할 수 있습니다. 이러한 유통 제한 기능을 통해 사용자는 자신의 데이터에 대한 주권을 행사할 수 있습니다.
+All data transactions on Airbloc Network will be transparently tracked.
 
-이러한 데이터 유통 제한은 탈중앙화된 블록체인 위에서 데이터 특성으로써 구현됩니다. 한번 데이터에 부여된 특성은 변경할 수 없으므로 개인 사용자들은 자신의 데이터가 자신의 통제권 안에서 다루어질 수 있도록 보장받습니다. 자세한 내용은 [데이터](#데이터) 문단에서 확인할 수 있습니다.
+In centralized systems, an individual user or other players in the ecosystem can’t find out how their data is collected and used. Perhaps this could be possible if the centralized system fully discloses data usage, but since it is heavily reliant on the good-will of the centralized entities and should be met with legal agreement, it can’t guarantee a 100% data traceability.
 
-### 데이터의 무단 탈취 방지
-전통적인 데이터 거래 네트워크에서는 중간 과정에서 값을 지불하지 않은 채 데이터를 복사할 수 있는 위험이 있습니다. 데이터는 무형의 디지털 자산으로 단순히 내용을 열람할 수 있는 것만으로도 가치를 탈취할 수 있기 때문입니다. 이로 인해 기존 시스템에서는 데이터의 유통을 제대로 제어할 수 없습니다. 예를 들어 데이터 사용 통제 및 추적을 피하기 위해 데이터를 복사했다가 다시 시스템에 임포트하는 방식으로 데이터 계보를 끊어버리는 데이터 이스케이핑(Data Escaping) 등의 행위가 가능합니다.
+Contrastingly, in the decentralized Airbloc Network, data collection is fully controlled by Users via DAuth and data campaigns. Also, every procedural step to data’s distribution along data pipeline is recorded, so Users and Advertisers can check data lineage any time.
 
-에어블록에서는 데이터의 무단 복제를 데이터의 익명화를 통해 사전에 차단합니다. 에어블록에서 유통되는 데이터는 광고 데이터로 데이터의 소유자에 대한 트래킹 가능한 정보가 들어 있는 식별자 없이는 활용할 수 없기 때문에, 식별자가 없는 익명 데이터는 아무런 가치를 지니지 않습니다. 이를 이용해서 에어블록 안에서 유통되는 데이터는 식별자가 제거된 채 익명화된 상태로 유통됩니다. 데이터에 대한 식별자는 오직 데이터 소유권을 구매한 컨슈머나 데이터의 소유자인 프로바이더만 접근할 수 있습니다.
+It is worth noting the fact that data traceability is not ensured by a single centralized entity, but rather through the smart contract which is open to the public and that is based on mutual checks and balances of all players to the network. In this regard, Users can be assured on their data traceability.
 
-또한 어떠한 방식으로든 데이터 소유자를 특정하는 것을 막기 위해, 익명화는 한 주체에서 다른 주체로 넘어갈 때마다 수행됩니다. 예를 들어 A라는 사람의 데이터는 가공자에게 넘어갈 땐 X라는 사람이 되며, 검증자에겐 Y라는 사람으로 보여지는 방식입니다. 컨슈머가 데이터에 대한 비용을 지불해 소유권을 구매해야 비로소 그 데이터가 A라는 사람의 데이터라는 것을 알 수 있습니다.
 
-따라서 에어블록 내의 데이터는 소유권을 얻기 전까지는 익명화된 무가치 데이터로, 데이터가 중간에 복사되어도 데이터 이스케이핑의 문제 및 무단 탈취 문제가 발생하지 않습니다. 자세한 내용은 [데이터 올리기](#데이터-올리기) 항목에서 확인할 수 있습니다.
+### Data Distribution Limitation
 
-## 데이터
+A distinguished feature of Airbloc is that data distribution can be limited by users. The individual users, who are the Data Providers, can limit the distribution of data by setting configurations. For example, User can cap the frequency of the data sales or restrict data from being used for specific ad types. With this custom configuration function, Users can reclaim own data rights and perceive ads as an useful piece of information.
 
-에어블록에서 거래되는 모든 데이터는 광고 데이터입니다. 광고 데이터는 어떤 개인에 관한 트래킹 가능한 데이터로 주로 개인의 관심사를 표현하기 때문에 관심 데이터라고도 불립니다. 여기서 주목해야 할 것은 광고 데이터는 트래킹 가능해야한다는 점입니다.
+Such limited data distribution is realized on the decentralized blockchain network, as an innate feature. Once assigned, the data feature is immutable. Therefore, the data controllability is guaranteed to the Users. More details can be found from the [Data](#data) section below. 
 
-트래킹 가능하지 않은 광고 데이터는 가치가 없습니다. 이는 데이터가 활용되는 순간에 가치를 지니기 때문입니다. 어떤 개인의 광고 데이터를 활용하는 방법은 그 사람에게 트래킹 광고를 집행하는 것인데, 트래킹 광고는 관심 데이터가 있더라도 데이터의 소유자에 대한 트래킹 가능한 정보가 들어 있는 식별자가 없다면 집행할 수 없습니다. 에어블록의 모든 데이터 시스템 설계는 **트래킹 가능하지 않은 광고 데이터는 가치가 0 **이라는 전제에서 출발합니다.
+### Preventing Data Breach
+In the traditional data exchange platforms, there lies a risk for copying or capturing the data in between transaction, without a proper data purchase. Since data is an intangible asset that owns an intrinsic value even by accessing them, this can be a crucial problem. In this context, conventional data exchange systems are always subject to the danger of not being able to completely track data pipeline. For example, “Data Escaping”, an activity of copying and subsequently exporting the disconnected data to the system, can be committed to avoid access control and tracking from the centralized system.
 
-### 종류
-에어블록에서의 광고 데이터는 수집 방식의 측면에서 **간접 데이터**, **직접 데이터** 두 가지 종류로 구분됩니다.
+On Airbloc, unauthorized act of data copy can be prevented with **data anonymization**. The data on Airbloc are used for digital advertising purpose and even a piece of this data can’t be used without a third-party common identifier. In other words, anonymized data without a common identifier carries almost zero value. Following this principle, data circulated within Airbloc will be removed of common identifiers that can be used for targeting. The common identifiers will be only be accessible to the consumers who have purchased the data or the data owner, who is the data provider. However, user-level random UUIDs shall be maintained for the user-level data aggregation and analysis. 
 
-**간접 데이터 (Indirect Data)** 사용자의 디바이스 등에서 자동으로 수집될 수 있는 데이터로 예를 들어 설치된 앱 리스트, 앱 사용 행태, Google Play 결제 내역, WIFI 데이터, GPS 데이터, 비콘 데이터 등이 있습니다. 이런 데이터는 사용자의 권한(Permission) 부여만으로도 자동으로 수집될 수 있다는 특징을 가집니다. 또한 이러한 데이터를 사용하여 간접적으로 해당 사용자의 정적인 속성을 추측할 수 있다는 점에서 간접 데이터라고 불립니다. 예를 들어 그 사용자가 “고양이를 키우는지 아닌지”를 직접적으로 물어보는 것이 아니라 그 사용자가 고양이와 관련된 앱을 설치하고 있는지의 여부로 간접적으로 추측하기 때문에 간접 데이터인 것입니다.
+Moreover, data anonymization is proceeded every time the data is transferred from one player to another. For example, a unique person with ID “A” will be replaced to ID “B” when handled by the refinery. Also, this person will be tagged as “C” for the gatekeeper. Only when the data consumer purchases the data and buys data ownership or usage rights, then the consumer will be able access the common identifier.
 
-반면에 **직접 데이터 (Direct Data)** 는 말 그대로 그 사용자에게 직접 특정 사실에 대해서 물어본 것이라고 할 수 있습니다. 위의 예시로 다시 돌아가서 직접 데이터를 수집하려면 “고양이를 키우는지 아닌지”를 직접 그 사용자에게 물어보면 되는 방식입니다. 나아가 그 사용자가 실제로 고양이를 키우고 있는지, 아니면 키우고 있지 않지만 단지 관심만 있는 것인지를 질문을 통해 답변을 받으면 됩니다. 직접 물어보고 수집한 데이터로 이는 직접 데이터에 속합니다.
+Accordingly, until the data ownership and/or usage rights are purchased, the data has almost no value, making it safe from data escaping, even if the data is breached in the middle. The aforementioned system will be built with Aero, which is Airbloc’s internal data management network. For further details, please refer to the [Data Anonymization](#data-anonymization) section.
 
-### 구성 요소
-에어블록에서의 광고 데이터는 식별 정보, 특성, 페이로드 (내용), 계보로 구성됩니다.
+## Data
 
-#### 식별자 (Identifier)
-식별자는 데이터 소유자를 식별할 수 있는 정보로 이메일, 이름, 고유 식별자(UUID) 등이 포함됩니다. 이중 고유 식별자는 해당 데이터 소유자에 대한 트래킹 가능한 고유 ID입니다. 일반적인 고유 식별자로는 타 플랫폼에서 트래킹이 가능한 Google Advertising ID나 Apple IDFA 등의 광고 ID가 있습니다.
+All data exchanged on Airbloc is digital advertising data (hereinafter referred to as ‘Ad data’). Ad data is also referred as  personal interest data because it represents individual user’s interests. Here, it is important to note that advertising data should be trackable.
 
-에어블록 네트워크에서 거래되는 데이터에는 반드시 **데이터 소유자의 고유 식별자가 최소 하나 이상 포함**되어야 합니다. 이는 에어블록에서 데이터를 소비하는 가장 큰 목적이 개인의 관심사를 알아내어 알맞은 타겟팅 광고를 제공하기 것이기 때문입니다.
+Non-traceable Ad data is valueless. This is because the data is valued at the moment when it is used. A method to use personal data is to run a targeted advertisement to that person. However, the ad can’t be run if the data does not contain an identifier, which is the trackable information from the data owner. All of Airbloc data system is built on the premise that **non-trackable ad data has a zero value.**
 
-#### 특성 (Trait)
-에어블록의 모든 데이터엔 유통 제한 특성이 부여됩니다. 에어블록에서는 프로바이더의 데이터 유통 제한을 위해 다음과 같은 특성을 사용합니다.
+### Types
+Ad data in the Airbloc is divided into two types by the collection method: **Indirect Data** and **Direct Data**.
 
-* 데이터의 사용 제한 범위
-* 데이터의 최대 재판매 횟수 (도달 수명)
+**Indirect Data** are types that can be automatically collected from user’s device, such as  list of installed apps, installed app usage, purchase history from Google Play, wifi history, GPS and Beacon Data. These are the data types that can be automatically collected once permission is configured. Also, Indirect Data can infer that corresponding user’s static characteristics. To be more specific, this Indirect Data guesses that the user is a cat owner given that that user is installing cat-related apps, which is not based on direct question asking, “do you have a cat?”.
 
-데이터는 특정 주체에 사용되거나 판매되지 않을 수 있으며 최대 재판매 횟수에 도달하면 더 이상 재판매되지 않습니다. 또한 한번 부여된 특성은 절대 변경할 수 없습니다. 예를 들어 도달 수명은 한번 부여되면 절대 임의로 연장할 수 없습니다. 이를 통해 사용자는 개인 데이터의 통제권을 완전히 보장받을 수 있습니다.
+On the other hand, **Direct Data** is collected with a direct question to the user about particular facts. Returning to the example above, Direct Data can ask the user “Do you have a cat or not” to collect the data. Simply put, these are directly answered and directly collected type of data.
 
-기술적으로 봤을 때 특성은 유한 상태 기계(Finite State Machine)로 제한함수(Limit Function)와 전이함수(Transition Function), 상태(Status)로 구성됩니다. 제한함수는 데이터에 대한 특정 Action의 실행을 제한하는 조건을 정의하며, 전이함수는 특정 Action이 발생했을 때 상태를 변경시키는 상태전이함수입니다. 상태는 오직 전이함수만 변경시킬 수 있으며 이 함수들은 불변성을 지닙니다.
+### Components
+On Airbloc, Ad data is grouped into four components: *Identifier*, *Trait*, *Payload*, and *Lineage*.
+
+#### Identifier
+The Identifier is the information that identifies the data owner such as name, email, and unique identifier (UUID). Unique identifier is a unique and traceable ID for the data owner. Also, Google Advertising ID and Apple IDFA are well-known identifiers that are generally used on other platforms.
+
+All data exchanged on Airbloc **must include at least one unique identifier** for the data owner. This is because the main purpose of data consumption on Airbloc is to identify users’ interests and to provide them with relevant targeted ads.
+
+#### Trait
+All data on Airbloc will be given the distribution limit traits. Airbloc employs the following rules to limit the data provider’s distribution:
+
+* Restricted usage of the data (Usage Blacklist)
+* Maximum number of data re-sells (Reaching Lifespan)
+
+Data may not be used or sold to a particular advertiser or a user, and will no longer be re-sold when the maximum number of re-sales is reached. For instance, once a life span is given, it can't be extended. This trait gives a user complete control of user’s personal data.
+
+Technically, Trait is made up of Finite State Machine, Limit Function, Transition Function and Status. Limit Function defines the condition in which that a particular action is limited on data and Transition Function changes the data status when a particular action occurs. The Status can only be modified by Transition Function, and these functions remain unchanged.
 
 <p align="center"><img src="./assets/traits-equation.png" width=280></p>
 
-예를 들어, 데이터의 재판매 횟수를 10번으로 제한한다고 하면, `ACTION_TRADE`라는 Action에 <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BT%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%2B%201">라는 특성함수를 만들고 <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BL%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%3E%2010"> 이란 제한함수를 만드는 방식으로 구현됩니다.
+For example, if you want to limit data re-sale count to 10 times, you can done this by creating the transition function <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BT%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%2B%201"> for the action `ACTION_TRADE`, and creating the limit function <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BL%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%3E%2010"> to the action.
 
-#### 페이로드 (Payload)
-페이로드는 데이터의 내용을 담고 있습니다. 페이로드 형식은 직접 데이터의 경우 캠페인 집행자가 결정하고, 간접 데이터의 경우 에어블록 내에서 표준화된 형식을 사용해야 합니다. 일반적으로 데이터의 페이로드는 블록체인 위에 저장하기에는 크기가 방대하므로, IPFS 및 S3와 같은 외부 스토리지에 암호화되어 저장되며 블록체인 상에는 접근 해시 키만을 저장합니다. 데이터 저장에 대한 자세한 내용은 [데이터 저장](#) 문단 및 부록의 [데이터 저장 방식](#데이터-저장-방식) 문단에서 확인할 수 있습니다.
+#### Payload
+The Payload contains data contents. The payload format is determined by the campaign executor for Direct Data, and for Indirect Data, standardized format is required in Airbloc. Generally, data payload is too large in its volume to be stored on blockchain. For this reason, the data is encrypted on external storage, such as IPFS or S5, and only the access hash keys are stored on blockchain. More information on saving data can be found from [Data Storing](#data-storing) section in Appendix.
 
-#### 계보 (Lineage)
-계보는 한 데이터가 에어블록 상에서 유통된 이력을 나타냅니다. 이는 데이터가 거래되면서 자연적으로 생성됩니다. 에어블록은 데이터의 계보를 무조건 투명하게 유지하므로 개인 사용자는 자신의 데이터가 어떻게 사용되는지 투명하게 알 수 있으며 컨슈머는 구매한 데이터가 어떠한 과정을 통해 유통되었는지 알 수 있습니다.
+#### Lineage
+Lineage refers to data distribution history on Airbloc. This Lineage is created as data exchange begins. Airbloc keeps data lineage transparently so that individual users can see how their data is used while consumers can view the procedural details on how their purchased data has been distributed.
 
-**데이터 계보는 데이터에 대한 소유권 없이는 열람할 수 없습니다.** 즉 데이터 유통에서 중간 과정에 있는 가공자, 검증자들은 데이터 계보를 조회할 수 없습니다. 이는 데이터 계보 조회를 통해서 데이터 소유자의 신원을 특정하는 것을 방지하기 위함입니다. 익명화된 데이터여도 소유자의 신원 특정이 가능해지면 앞서 설명한 무단 복제나 데이터 이스케이핑이 가능해지므로 소유권이 없는 주체는 계보를 확인할 수 없습니다. 이는 [데이터에 대한 권리](#데이터에-대한-권리) 항목에서 자세히 확인할 수 있습니다.
+**Data Lineage can’t be accessed without data ownership.** That is to say, the gatekeeper and the refinery, who are located in between the data distribution pipeline, can’t view the data lineage. This is for preventing presume of the identity of data owner from by querying the lineage. Even if the data is anonymized, if someone can presume the identifier of the data, then data escaping or the breach of data – using the data without paying for it – can be occur. Therefore, Airbloc denies access to data lineage to those without data ownership. For more details, please see [Rights of Data](#rights-on-data) section.
 
-### 데이터에 대한 권리
+### Rights on Data
 
-에어블록은 데이터에 대한 권리를 **사용권**, **추적권**, **소유권**으로 구분한다. 권리를 나누는 가장 큰 기준은 식별자에 대한 접근 가능 여부입니다. 그 이유는 앞서 설명된 것처럼 광고 데이터는 소유자에 대한 식별자 없이는 무가치하기 때문입니다.
+Airbloc categorizes data rights into **Usage Rights**, **Tracking Rights**, and **Data Ownership**. The largest criteria for this categorization on data rights is the availability of identifiers. This is because advertising data is worthless without an identifier of the owner, as mentioned above.
 
-**사용권**은 데이터 페이로드에 접근할 수 있는 권리입니다. 이 권리는 데이터 파이프라인의 중간에 위치한 가공자와 검증자가 가지게 됩니다. 예를 들어 가공자는 데이터를 구매하지 않고도 데이터의 페이로드에 접근해 해당 사용자의 직접 데이터와 간접 데이터를 가공해 관심 데이터를 만들 수 있지만, 해당 사용자의 실제 식별자는 알지 못하므로 데이터를 탈취해도 해당 광고 데이터는 무가치한 데이터일 뿐입니다.
+**Usage Rights** is the right to access data payload. It will be given to the data refinery and gatekeeper who are located in the middle of the data pipeline. For example, a data refinery can access the data payload without purchasing data and process the user's both direct and indirect data to create the interest data. However, since the actual identifier of the user is unknown, that data is nothing more than a piece of worthless information.
 
-**추적권**은 식별자에만 접근할 수 있는 권리입니다. 데이터의 페이로드에 접근하지 않고서도 그 타겟 자체만 판매할 수 있게 함으로써 사용자의 원 데이터의 전달 없이 광고주들이 광고 타겟팅을 할 수 있도록 도와줍니다. 이는 Facebook을 포함하여 많은 DSP들이 데이터를 업로드하지 않더라도 광고 ID만으로도 타겟을 생성하게끔 할 수 있기 때문입니다. 이렇게 사용자의 데이터를 보호하면서 오직 그 사용자를 타겟팅하여 광고할 수 있는 권리만 판매할 수 있습니다.
+**Tracking Rights** are the rights granted to access only the identifiers. This allows advertisers to target ads without having to deliver the user's raw data by allowing only the target to be sold without accessing the data payload. Many DSPs, including Facebook, do not need to upload data, but advertisers can create a target with just the ADID. This can protect users’ data and allows users to sell only the right to advertise and target that particular user.
 
-**소유권**은 데이터의 전체 내용을 접근할 수 있는 권리입니다. 이 권리는 데이터 파이프라인의 양극단에 위치한 프로바이더나, 컨슈머만이 가지고 있습니다. 데이터의 소유권을 가진다는 것은 데이터의 소유자 정보(고유 식별자, 계보)에 접근할 수 있게 된다는 의미이며, 데이터의 거래는 실질적으로 데이터의 소유권을 거래하는 것으로 볼 수 있습니다.
+**Data Ownership** is the right to access data’s entire contents. This right is only available to data providers or data consumers who are at the each extremes of the data pipeline. Owning data means being able to access data owner’s data information (unique identifier, lineage), and transaction in the data is regarded as trading of the data ownership.
 
 
-|   |  사용권  |  추적권  |  소유권  |
+|   |  Usage Rights  |  Tracking Rights  |  Data Ownership  |
 |---|:-------:|:------:|:------:|
-|페이로드 접근    |  ⃝ | **✕** |  ⃝ |
-| 식별자 접근    | **✕** |  ⃝   |  ⃝ |
-|계보 접근      | **✕** |  ⃝ |  ⃝ |
+| Payload Access    |  ⃝ | **✕** |  ⃝ |
+| Identifier Access | **✕** |  ⃝   |  ⃝ |
+| Lineage Access      | **✕** |  ⃝ |  ⃝ |
 
-## 데이터 파이프라인 개요
+## Data Pipeline Overview
 
 <p align="center"><img src="./assets/ecosystem-horiz-detailed.png" width=800></p>
 
-에어블록에서의 데이터는 다섯 주체를 거치며 일곱 과정의 SOIPRTC 파이프라인 (Source - cOllection - Ingestion - Persistence - Refining - Trading - Consumption)을 통해 컨슈머에게 전달됩니다. 사용자가 만든 데이터는 수집자에 의해 수집되어 검증자의 정제 (Cleansing) 후 수집자가 저장합니다. 가공자는 이를 가공해 마켓에서 데이터를 컨슈머에게 판매하게 됩니다. 
+The data on Airbloc will go through seven steps of SOIPRTC (Source - cOllection - Ingestion - Persistence - Refining - Trading - Consumption) pipeline, across five entities. User-created data is gathered by the Data Collector and stored by the Data Collector after the Gatekeeper executes data cleansing. Refinery will refine this data into commercially available Ad data and sell data to consumers at Marketplace.
 
-### 데이터 원천 (Data Source)
-데이터는 프로바이더인 사용자에게서 만들어집니다. 간접 데이터는 사용자의 행동이나 정적인 속성으로부터 자연스럽게 만들어지고, 직접 데이터는 데이터 캠페인 질문에 답변하면서 만들어집니다. 사용자는 수집될 수 있는 데이터의 종류를 제한하거나, 데이터에 유통 제한을 설정하는 방식으로 데이터가 만들어지는 단계에서 데이터를 통제할 수 있습니다.
+### Data Source
+Data is created by a user who is the data provider on Airbloc. Indirect Data is created naturally from user behavior from static attributes, while Direct data is created by answering data campaign’s survey questions. User gets to control the data from the stage when it is created, either by limiting data types to be collected, or by configuring data’s distribution limits.
 
-### 데이터 수집 (Data Collection)
-수집자는 프로바이더로부터 이러한 데이터를 수집합니다. 간접 데이터는 앱사들이 DAuth를 거쳐 수집하고, 직접 데이터는 경우 캠페인 집행자가 사용자들에게 질문을 하고 답변을 받는 방식으로 수집합니다.
+### Data Collection
+Data Collector gathers these data from the Data Provider. Indirect data is collected through DAuth, and Direct data is gathered through data campaigns – through asking survey questions and receiving response from the users.
 
-### 데이터 올리기 (Data Ingestion)
-에어블록과 같은 데이터 시스템은 수 많은 소스로부터 데이터를 가져올 때 데이터의 형식을 하나로 통합하고, 필요없는 부분을 삭제하는 클렌징(Cleansing) 작업을 거쳐야 데이터를 유용하게 취급할 수 있습니다. 이러한 가공 작업을 데이터 올리기(Data Ingestion)라고 합니다. 수집자는 데이터 올리기 과정을 통해 클렌징되어 블록체인에 등록된 데이터를 저장해야 합니다. 자세한 과정은 데이터 올리기 문단에서 확인할 수 있습니다.
+### Data Ingestion
+When Airbloc aggregates data from multiple sources, data formats should be unified and schema checks must be made in order to cleanse data by removing unnecessary parts, for an effective data use. This cleansing task is referred to as **Data Ingestion**. Data Collector can only register data on blockchain through Data Ingestion (data cleansing) and this process is required for data storage. Further details can be found from [Data Ingestion](#data-ingestion) section. 
 
-### 데이터 저장 (Data Persistence)
-**데이터 저장은 수집자가 담당합니다.** 에어블록은 자체적으로 데이터를 저장하지 않으며, 별도의 저장 수단을 마련하지 않습니다. 데이터 저장 및 유지의 의무는 수집자가 가지며고, 수집자는 어디에든 데이터를 저장할 수 있습니다. 필요할 때 접근이 가능한 조건을 충족시키는 S3, HDFS, IPFS, Swarm 등의 다양한 저장소를 사용할 수 있습니다.
-수집자는 올리기 과정에서 가공된 데이터를 저장하고, 해당 데이터의 URI를 에어블록에 등록해야 합니다. 대신 데이터 사용권 및 소유권자가 데이터에 접근할 때마다 검증자에 의해 데이터 검증이 이루어집니다. 자세한 내용은 부록의 [데이터 저장 방식](#데이터-저장-방식) 항목에서 확인할 수 있습니다.
+### Data Persistence
+**Data Collector is responsible for storing data.** Airbloc doesn't store data internally and it does not own a seperate data storage. The obligation of data storage and maintenance is held by Data Collector, and Data Collector can store data anywhere. Various repositories including S3, HDFS, IPFS and Swarm can be used, when access conditions are met upon the needs.
 
-### 데이터 가공 (Data Refining)
-수집자가 수집한 데이터는 후술할 Raw 데이터 마켓에서 직접 컨슈머에게 팔릴 수도 있지만, 데이터는 가공자에 의해 세그먼트나 지표 등으로 의미있게 가공되어 더 높은 가치로 컨슈머에게 제공될 수 있습니다. 가공자는 여러 수집자로부터 직접 데이터와 간접 데이터를 받아 관심 데이터나 인사이트 데이터 형태로 가공하고, 데이터가 판매될 때 마다 가공자 인센티브를 받습니다. 자세한 내용은 [가공자](#가공자) 항목에서 확인할 수 있습니다.
+Data Collectors will first cleanse the data and register data URI to Airbloc. To ensure both data quality and anonymity, each time a data owner and usage rights holder accesses data, the gatekeeper will determine if the data secure and intact. Further details can be found from [Data Storage](#data-storage) section.
 
-### 데이터 거래 (Data Trading)
-데이터의 거래는 마켓플레이스에서 이루어집니다. 마켓플레이스는 **데이터 마켓**과 **인사이트 마켓**으로 나뉩니다. 마켓플레이스에서는 수집자나 가공자가 등록한 데이터가 소비자에게 판매됩니다. 소비자는 데이터를 소비하기 위해선 마켓플레이스에서 데이터를 ABL 토큰으로 구매해 소유권을 취득해야 합니다. 자세한 내용은 [마켓플레이스](#마켓플레이스) 항목에서 확인할 수 있습니다.
+### Data Refining
+While the data gathered by Data Collector can be sold directly at the raw data Marketplace, which will be mentioned later, it can also be processed to become a more valuable and insightful data to Data Consumers in the forms of personal interest data or predictive indicator by data refinery. The refinery can get Direct or Indirect Data from Data Collector and process to interest data or insight data. After then,  it gets refinery incentive every time data is sold. Further details can be found on [Data Refinery](#data-refinery) section.
 
-### 데이터 소비 (Data Consumption)
-소비자가 거래를 통해 데이터를 구매하면, 올리기 과정에서 익명화되었던 데이터들은 비익명화되어 소비자에게 전달됩니다. 소비자들은 이 데이터를 Facebook Audience 등으로 Export 하여 광고에 바로 활용할 수 있습니다.
-
-지금까지 에어블록의 데이터 파이프라인 개요를 다루었습니다. 다음 항목에서 데이터 파이프라인 순서에 따른 구체적인 데이터 유통 과정을 서술합니다.
+### Data Trading
+Data Transactionding is made at the Marketplace. Marketplace is composed by **Data Market** and **Insight Market**. In Marketplace, the data registered by Data Collector or Refinery is sold to consumers. When a consumer buys data from the Marketplace as an ABL token, the consumer gains data ownership. Further details can be found from [Marketplace](#marketplace) section.
 
 
-## 데이터 수집
+### Data Consumption
+When the data is consumed through data transaction, anonymized data during upload are non-anonymized, which will be delivered to Data Consumers along with the unique identifier. Data Consumers can then use this data for ads directly.
 
-에어블록에서의 데이터 수집은 앱이 담당합니다. 앱은 사용자들에게 수집한 [간접 데이터](#간접-데이터)나 [직접 데이터](#직접-데이터)를 에어블록에서 판매해 수익화할 수 있다. 이것이 앱의 데이터 독점이나 개인 데이터 권리 침해를 의미하지 않습니다. 판매 수익은 사용자에게 일정 비율로 배분되며, 판매할 수 있는 데이터의 종류와 권한은 사용자가 직접 선택할 수 있기 때문에 앱은 오로지 데이터 판매 대리인의 역할로서 사용자와 수익을 나누게 됩니다.
+So far, overview on Airbloc data pipeline was addressed. The following sections will describe specific data distribution processes following the data pipeline order.
 
-데이터를 수집하려면 먼저 에어블록 네트워크에 앱을 등록해야 합니다. 이때 앱을 등록하려면 최소 1,000 ABL 이상을 홀딩해야 합니다. 또한 앱이 마켓플레이스에서 판매할 수 있는 최대 개별 사용자의 수는 앱이 홀딩하는 ABL의 양에 비례해 늘어납니다. 이는 악성 앱이 시빌 공격이나 데이터 생성 공격 등을 통해 가공자와 마켓플레이스를 공격하는 것을 방지하기 위함입니다. 이와 관련된 수식은 추후 기술백서에서 업데이트될 예정입니다.
+
+## Data Collection
+
+On Airbloc, data is collected by the Apps. These Apps can monetize [Indirect Data](#indirect-data) and/or [Direct Data](#direct-data) collected by users in Airbloc. This does not mean a data monopoly on user’s app nor a violation to user’s personal data rights. Sales revenue is distributed to users at a fixed rate, and the user can choose the type and authority of the data that can be sold. In this regard, the App only shares the revenue with the user as a data sales agent
+
+To collect data, Data Collectors should first register their App on Airbloc Network. For this, the Data Collector is required to hold certain amount of ABL tokens in advance. The maximum number of users that an App can upload on the Network proportionately increases to the ABL amount the App is holding. This is to prevent malicious apps from attacking the refinery and Marketplace through Sybil attacks and/or data generation attacks. The formula for the maximum number of users according to the App-held ABL tokens is as follows.
 
 ### DAuth
-DAuth (DataAuth)는 에어블록에서 사용자의 데이터 수집 및 수익화에 대한 수집자와 사용자간의 동의 절차입니다. 앱을 설치한 후 최소 한번 이상의 DAuth를 통해 개별 사용자로 하여금 데이터 수집에 동의하고, 수집할 데이터의 종류를 결정하게 하는 과정을 거쳐야 앱은 비로소 그 사용자에게서 간접 데이터를 수집할 수 있습니다.
+DAuth (DataAuth) is an agreement process between Data Provider and Data Consumer on the data collection and monetization on Airbloc. Once the App is installed, Users should agree with DAuth’s data collection for more than once upon app install, so that the App can collect Indirect Data from that User, allowing that particular User to determine types of data to be gathered.
 
-에어블록과 DAuth 과정이 앱이 자연적으로 사용자에게서 데이터를 수집하는 것을 막을 수는 없지만, 사용자에게 동의받지 않은 종류의 간접 데이터는 에어블록에 올려 수익화할 수 없도록 데이터 클렌징 과정에서 필터링됩니다. 이를 통해 사용자는 데이터의 정당한 수집을 보장받을 수 있습니다.
+While Airbloc and DAuth process can’t prevent Apps from auto-collecting data from Users, Indirect Data types that were unaccepted by Users will be filtered during data cleansing, so that they aren’t monetized on Airbloc. According to this mechanism, a fair data collection will be ensured to the Users.
 
-수집자는 앱을 등록한 후, 에어블록 네트워크에 앱이 수집할 간접 데이터의 종류와 보상의 비율을 등록합니다. 수집할 데이터의 종류는 설치된 앱 리스트, 인앱 결제 내역 등이 될 수 있습니다. 그리고 데이터의 종류별로 보상을 설정하고, 사용자와 얼마의 비율로 분배할 것인지 설정합니다. 단, **앱은 최소 30% 이상의 수익을 사용자에게 분배해야 한다**는 조건이 있습니다. 이렇게 등록된 수집할 데이터와 보상 비율은 블록체인에 기록되며, DAuth 절차를 통해 사용자에게서 동의를 받게 됩니다.
+Once App is registered, the Data Collector can set up types of Indirect Data to be collected on Airbloc Network and its respective reward compensation ratio. The data types to be collected can be app install list, in-app payment details, and etc. Furthermore, the reward compensation and ratio can be configured by data types and Users. Here, there is an attached condition that **at least 30% of the App’s revenue must be shared with the Users**. The registered data to be collected and compensation ratio will be saved on to the blockchain, and via DAuth, Users’ agreement will be met.
 
 
 <p style="margin-top:40px;margin-bottom-20px;" align="center"><img src="./assets/dauth-pipeline.png" width=700></p>
 
-DAuth의 구체적인 절차는 다음과 같습니다.
-
 <img align="right" width=270 style="margin-left: 20px;" src="./assets/dauth-dialog.png">
 
-1. 애플리케이션에서 에어블록에 인증 절차 시작을 요청
-2. 에어블록에서 애플리케이션에게 요청 토큰을 발급
- * 요청 토큰은 1회성이며 DAuth 다이얼로그를 띄울 때 사용
-3. 애플리케이션에서 에어블록 SDK를 통해 DAuth 다이얼로그를 띄움
-4. 에어블록에서 사용자에게 DAuth 다이얼로그 표시
-  * 다이얼로그엔 앱이 수집을 원하는 데이터의 종류, 보상 및 수익 분배 비율 표시
-5. 사용자가 데이터 수집에 동의
-  * 사용자는 데이터 종류별로 수집에 동의할 수 있음
-  * 보상을 지급받을 에어블록 계정 (없으면 이메일)을 입력
-6. 에어블록은 사용자가 동의한 데이터의 종류를 블록체인에 기록
-  * 수집자는 사용자가 동의한 데이터만 에어블록에서 수익화할 수 있음
-  * 동의하지 않은 데이터는 [데이터 올리기](#데이터-올리기-(data-ingestion)) 단계에서 필터링되므로, 에어블록에 올릴 수 없다.
+The details to DAuth are as follows:
 
 
-DAuth는 Civic [[1]](https://tokensale.civic.com/CivicTokenSaleWhitePaper.pdf), uPort [[2]](https://www.uport.me/)와 같은 개인 인증 시스템은 아닙니다. 물론 이러한 개인 인증 시스템엔 데이터 수집에 대한 동의 기능도 포함되어 있지만, 대신 앱에서의 인증 수단을 대체하기 때문에 앱 (수집자)에게 외부 플랫폼 사용에 대한 부담을 줄 수 있고 사용자에게도 로그인을 하려면 해당 플랫폼의 계정이 있어야 한다는 부담을 줄 수 있습니다.
+1. Request to begin authentication to Airbloc on App
+2. Issue Request Token to App on Airbloc
+ * Reqeust Token is one-off, and is only used to display DAuth dialogue
+3. The App launches DAuth dialogue via Airbloc SDK
+4. Display DAuth dialogue to Users on Airbloc
+  * Show users the data types they wish to collect, the amount of rewards, and revenue sharing ratio
+5. User agrees to data collection
+  * User can agree by differing data types
+  * User enters Airbloc account (if unavailable, email) to receive rewards
+6. Airbloc records the data types user permitted to collect
+  * Data Collector can only monetize data of which users permitted via agreement
+  * Unpermitted data will be filtered during [Data Ingestion](#data-ingestion) process
 
-하지만 **DAuth를 통하면 에어블록 계정 없이도 데이터 판매 보상을 받을 수 있습니다.** 사용자가 에어블록 클라이언트를 설치한 상태라면 자동으로 사용자의 계정으로 보상이 들어오고, 그렇지 않다면 사용자는 별도의 가입 절차 없이 이메일만 입력하고 해당 이메일에 보상을 모아둘 수 있습니다. 나중에 해당 이메일 계정으로 에어블록에 가입하면 그동안 쌓인 보상을 그대로 확인할 수 있습니다. 
 
-위와 같은 특성으로 인해 앱사들은 외부 플랫폼 사용에 대한 부담을 크게 줄일 수 있고, 사용자는 에어블록 계정 없이도 데이터 권리를 보장받을 수 있습니다. 이처럼 DAuth는 에어블록 생태계 밖의 사용자에게도 데이터 주권을 되찾아주는 역할을 수행할 수 있습니다.
+DAuth is not a personal identification service such as Civic [[1]](#https://tokensale.civic.com/CivicTokenSaleWhitePaper.pdf), and uPort [[2]](https://www.uport.me/). These identification services, of course, also includes an authorization feature on data collection. However, these services are identification services, so can substitute authentication method on App, which can burden the App for using an external platform. Not only that, it requires the User to own an account to the corresponding platform to log in.
 
-DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/knowledgecenter/en/SS9H2Y_7.5.0/com.ibm.dp.doc/oauth_threeleggedflow.html) 방식과 유사한 구조를 가지고 있습니다. DAuth에서의 에어블록은 OAuth에서의 서비스 프로바이더가 되는 것입니다. 하지만 OAuth는 개인 인증 목적을 포함하는 반면 DAuth는 간접 데이터 수집에 관한 동의만을 다루며, OAuth에선 데이터의 소유 주체가 서비스 프로바이더이지만 DAuth에서의 데이터 소유 주체는 개인 및 앱입니다. DAuth에서의 에어블록은 개인의 데이터가 개인의 동의하에 투명하게 수익화되는 것을 보장할 뿐입니다.
+Nonetheless, with DAuth, **Users are allowed to receive data sales compensation without an Airbloc account.** If a user have already installed Airbloc Client Service, compensation is automatically stored to the User account. If not, User can enter email without signing up. Later on, the User join Airbloc with User’s email account to see accumulated compensation which was earned so far.
 
-### 데이터 캠페인
+With such features, App companies can greatly reduce the burden of using external platforms, while Users are guaranteed of their data rights without having an Airbloc account. As such, DAuth can reclaim data ownership to Users who are outside the Airbloc ecosystem.
 
-에어블록에서는 다른 데이터 거래소에서와는 달리 광고주가 사용자에게 원하는 관심 데이터를 질문하는 방식으로 데이터를 살 수 있습니다. 광고에서의 캠페인처럼, 에어블록은 이를 **데이터 캠페인**이라고 합니다. 사용자는 수집자의 앱을 통해 질문에 답하며 보상을 얻을 수 있습니다.
+The DAuth is built on a similar architecture to that of OAuth’s Three-Legged Authorization [[3]](https://www.ibm.com/support/knowledgecenter/en/SS9H2Y_7.5.0/com.ibm.dp.doc/oauth_threeleggedflow.html). In DAuth, Airbloc becomes the service provider of OAuth. However, while OAuth also includes personal authentication service, DAuth only includes agreement on Indirect Data collection. Moreover, the data owning entities to DAuth are individual users and/or Apps, as opposed to that of OAuth, which are service providers. In short, DAuth on Airbloc only ensures transparent monetization of personal data that only comes under user’s agreement.
 
-기술적으로 데이터 캠페인은 캠페인 집행자가 직접 데이터를 수집하기 위해 원하는 데이터를 제공하면 그에 대한 보상을 주겠다는 제안을 네트워크 내 특정 프로바이더에게 정해진 기간동안 노출시키는 행동을 의미합니다. 사용자들은 제안을 수락하고 질문에 답변할 인터페이스를 통해 직접 데이터를 제공합니다.
+### Data Campaign
 
-간접 데이터 수집이 에어블록 SDK를 사용하는 모든 앱에서 이루어질 수 있는 반면, 데이터 캠페인을 통한 직접 데이터 수집의 경우 별도의 에어블록 캠페인 SDK를 사용하는 앱이나 에어블록 메인 클라이언트 앱에서 참여가 가능합니다. 이러한 앱들은 반드시 사용자가 질문에 답변할 수 있는 UI를 갖추고 있어야 합니다.
-캠페인은 질문, 보상, 타겟, 캠페인 기간, 도달 비용으로 이루어집니다.
+On Airbloc, unlike other data exchanges, advertisers can purchase data by asking user directly what they want. Like campaigns in advertising, this procedure is called ‘**Data Campaigns**’ on Airbloc. Users can get rewards by submitting  responses to survey questionnaires.
 
-**질문 (Query)** 은 수집하길 원하는 데이터에 대한 설명입니다. 질문은 자연어 질문과 스키마로 이루어져 있다. 자연어 질문은 사용자에게 표시될 문장 형태의 질문이나 부가 정보이며, 스키마는 원하는 데이터의 페이로드 형식을 정의합니다. 예를 들어 `isMarried: Boolean`이라는 스키마는 데이터 프로바이더가 페이로드의 `isMarried`라는 필드에 `Boolean` 형식의 데이터를 전송해야 함을 의미합니다.
+Technically, data campaigns is defined as an activity to expose certain proposal which involves users’, data providers’ activity of directly submitting answers to the questions in exchange of rewards given by the campaign initiators. Users willing to participate in the data campaigns will accept the proposal and directly submit answers to the questions with the provided interface. 
 
-**보상**은 컨슈머가 데이터당 프로바이더에게 지불해야 할 ABL 토큰의 양입니다. 프로바이더가 캠페인에 응답해 데이터를 제공하면, 컨슈머는 프로바이더에게 보상을 제공합니다. 프로바이더는 한 캠페인당 최대 한번밖에 응답할 수 없기 때문에, 컨슈머가 지불해야 할 총 보상액은 (보상 가격) ✕ (응답한 프로바이더 수)가 됩니다.
+Indirect data collection is feasible for all apps with Airbloc SDKs, however, direct data collection is only feasible in the apps with additional Airbloc Data Campaign SDK or in Airbloc main client app. These apps must be equipped with certain UI for their users to properly interact with.
 
-**타겟**은 캠페인을 노출시킬 프로바이더 사용자군입니다. 이는 프로바이더가 초기에 설정한 관심 정보에 따라서 이루어지며, 설정된 타겟군에 해당하는 관심을 가진 프로바이더에게만 캠페인이 노출됩니다.
+Campaign consist of *Question*, *Reward*, *Target*, *Duration*, and *Reaching Fee*.
 
-**캠페인 기간**은 캠페인을 노출시킬 기간입니다. 캠페인 기간은 시간 단위로 설정이 가능하며, 한번 설정하면 수정이 불가능합니다. 캠페인 기간을 연장하려면 새 캠페인을 생성해야 합니다.
+**Question** is an explanation into the target data of collection. Questions are categorized into natural language type questions and schema-based questions. Natural language type questions are a series of sentences or additional information attached to the question. Schema defines the format of data payload that will be uploaded to the network. For example, `isMarried: Boolean` schema means payload should assign proper key-value pairs; key has to match the string `isMarried` and the value has to follow `Boolean` type.
 
-이렇게 구성된 캠페인을 집행하려면 **도달 비용**을 ABL 토큰으로 지불해야 합니다. 도달 비용은 얼마나 많은 사용자에게 캠페인이 노출될지를 다음 공식에 따라 결정합니다.
+**Reward** is the amount of ABL tokens that should be given from data consumer to the data provider. When data provider answers to the question given by the data campaign, then consumer gives reward to the data provider. As data provider can respond only once to the each campaign, the total amount of rewards the consumer has to pay is (Reward Price) ✕ (Number of Participants).
+
+**Target** is the target users, target data providers of the data campaign. This target is automatically set according to the interest data submitted by the user in the onboarding stage. 
+
+**Duration** is the time range of the data campaign being exposed to the users. Duration can be set by an hourly basis and is immutable. For the change of campaign duration, the one needs to launch a new campaign.
+
+The **Reaching Fee** must be paid with ABL token. The reaching fee of campaign exposure as to how many users will be exposed will be computed by the following formula.
 
 <p align="center">
 <img src="https://latex.codecogs.com/svg.latex?\mbox{Cost}%20=\mbox%20{Period}%20\times%20\exp%20\left(%20\frac{\mbox{Number%20of%20Target%20Provider%20Group}}{\mbox{Total%20Number%20of%20Provider}}%20\right)%20\times%20\mbox%20{Constant}" alt="\mbox{Cost} =\mbox {Period} \times  \exp \left( \frac{\mbox{Number of Target Provider Group}}{\mbox{Total Number of Provider}} \right) \times \mbox {Constant} "></p>
@@ -307,276 +295,282 @@ DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/k
 <!--$$\mbox{Cost} =\mbox {Period} \times  \exp \left( \frac{\mbox{Number of Target Provider Group}}{\mbox{Total Number of Provider}} \right) \times \mbox {Constant} $$
 -->
 
-더 많은 사용자들에게, 더 오래 캠페인을 노출시키려면 더 많은 도달 비용을 지불해야 합니다. 이렇게 도달 비용을 둠으로써, 불필요한 정크 캠페인의 집행을 제한해 사용자 경험을 향상시킬 수 있습니다. 지불된 비용은 [AIR Pool](#air-pool)에 쌓입니다.
+In order to expose data campaigns to the more users with longer time period, then the Data Collector must pay for the higher campaign exposure costs. The campaign exposure cost prevents Data Collectors from recklessly launching meaningless campaigns and will enhance user experience. The cost will be accumulated on [AIR Pool](#air-pool).
 
-캠페인을 집행하면, 해당 캠페인은 Push 방식을 통해 네트워크에 전파되어 특정 프로바이더들에게 노출됩니다. 프로바이더들은 캠페인에 응답해 데이터를 제공하고 보상을 받을 수 있습니다.
+When Data Collectors launch the data campaign, the campaign will be spread to the specific group of Data Providers with push notifications and similar type of messages. Then the Data Providers will respond to the campaigns and get rewards.
 
-## 데이터 올리기 (Data Ingestion)
+
+## Data Ingestion
 
 <p align="center"><img src="./assets/ingestion.png" width="700px"></p>
 
-에어블록과 같은 데이터 시스템은 수많은 소스로부터 데이터를 가져올 때 데이터의 형식을 하나로 통합하고, 필요없는 부분을 삭제하는 클렌징 (Cleansing) 작업을 거쳐야 데이터를 다룰 수 있습니다. 이러한 가공 작업을 데이터 올리기 (Data Ingestion)이라고 합니다.
+In a data hub system like Airbloc, the data comes from numerous other sources, so the system need to cleanse the unwanted parts of data and integrate the format of the data before using it. This process is called Data Ingestion.
 
-수집자가 자신이 수집한 데이터를 거래하려면 에어블록 네트워크에 데이터를 올리는 과정을 거쳐야 합니다. 에어블록의 데이터 올리기 과정은 Aero라는 별도의 데이터 관리 네트워크에서 이루어집니다.
+In order for an Collector (App) to monetize the data collected, they must register the data to the network and go through the data ingestion process. The data ingestion process in Airbloc is performed in an own data validation network called Aero.
 
-* 수집자가 데이터를 등록하려면 먼저 한 Aero 노드에게 데이터를 등록합니다.
-* 해당 노드는 데이터를 Aero 네트워크상에 전파합니다.
-* 노드들은 정해진 데이터 형식 통합 규칙에 따라 데이터를 가공합니다.
-    * 사용자의 식별자 정보를 별도로 분리합니다.
-    * 사용자의 식별자 정보에 Nonce를 추가합니다.
-* 노드들은 정해진 데이터 클렌징 규칙에 따라 데이터를 가공합니다.
-    * 블록체인에 올려진 사용자의 데이터 수집 동의 내역을 참조해, 사용자가 수집에 동의하지 않은 데이터를 필터링합니다.
-    * 불필요한 데이터를 필터링합니다.
-* PoS 컨센서스를 수행해 채택된 가공 데이터와 그 SHA256 해시가 블록체인에 등록됩니다.
-* 가공된 데이터와 함께 해시를 다시 수집자에게 전달합니다.
+1. To register data, a collector registers data to some Aero node.  
+2. The node propagates data to the network.
+3. Nodes process the data according to the data integration rules specified by Airbloc.
+    * It separates the owner’s user identifier of the data. 사용자의 식별자 정보를 별도로 분리합니다.
+    * It adds some nonce to the separated user identifier data.
+4. Nodes cleanses the data according to the data cleansing rules specified by Airbloc.
+    * It filters out the data that the user didn’t allowed to collect, referring to the data authorization record of the user on the blockchain.
+    * It filters out unnecessary data fields.
+5. Nodes reach PoS consensus on the right data, and registers the elected data and its hash to the blockchain.
+6. Nodes return the cleansed data and its hash to the collector.
 
-수집자는 위 과정을 통해 가공되어 등록된 데이터를 저장해야 합니다. 수집자가 가공된 데이터를 무시하고 원 데이터를 저장하더라도, Data Availability Proof Task를 통해 해당 데이터는 변조된 데이터로 인식되어 패널티를 받게 됩니다. 따라서 에어블록의 데이터 올리기 과정을 통해 수집자를 견제하여 사용자의 데이터 권리를 지킬 수 있습니다.
+The collector must store the data that cleansed and ingested. If the collector neglects the cleansed data and stores the original data, the collector will be punished get penalty during the data availability proof task since they are serving the wrong data. Therefore, it’s possible to protect the user’s data control rights through the data ingestion process of Airbloc.
 
-### 익명화된 데이터 유통
+### Data Anonymization
 
-에어블록은 데이터 올리기 과정에서 데이터에 있는 식별자 정보를 별도로 분리해 저장합니다. 이후 블록체인에 데이터가 등록될 때는 식별자와 페이로드에 대해 해시값과, 열람 권한이 있어야 접근할 수 있는 접근 URI만이 각각 저장되어 유통되기 때문에 데이터 유퉁 과정 중간 과정에서는 사용자의 원래 식별자를 알 수 없습니다.
+Airbloc separately stores the identifier in the data on data ingestion process. Only the hash of identifier and payload and access URI – that cannot be accessed without permission –  are registered on blockchain, so the original identifier of the data cannot be known on the middle of data pipeline.
 
-물론 일반적으로 식별자 정보는 사용자에 대해서 모두 동일하기 때문에 식별자에 대한 해시값만으로도 데이터의 소유자를 특정하는 문제가 발생할 수 있습니다. 에어블록은 데이터 올리기 과정에서 식별자에 Nonce가 추가되어 해시화되기 때문에 같은 사용자의 식별자라도 전부 다르게 해시화되어 이 문제를 방지합니다.
+Of course, the identifier of data is generally the same for one user, so there’s a possibility of problem that data owner can be presumed by the hash of the identifier. Airbloc prevents this problem by adding nonce to the identifier when hashing, so identifiers of same user will be all different. 
 
-이 기능의 존재가 에어블록에서의 데이터 거래의 불투명성을 야기하지는 않을 것입니다. 이 기능의 존재 목적은 오직 개인 데이터가 허가되지 않은 주체에게 유출되는 상황을 방지하기 위해 데이터 유통 과정에서 데이터를 보호하는 것입니다. 데이터 거래 기록은 블록체인 트랜잭션과 데이터 계보로 투명하게 저장됩니다.
+The presence of this feature will not cause the non-transparency of data transactions in Airbloc. The purpose of this feature is to protect data in the data distribution process to prevent situations of data leaking to unauthorized subjects. Data transaction records are stored transparently with blockchain transactions and data lineage.
 
-에어블록은 이처럼 익명화된 데이터 유통을 통해 데이터 이스케이핑(Data Escaping) 등 데이터에 대한 값을 제대로 지불하지지 않고 데이터의 가치를 유출시키는 행위를 방지합니다.
+Thus, Airbloc prevents data escaping – leaking the data without paying for it – using data anonymization.
 
-## 데이터 가공자 (Data Refinery)
-위와 같은 수집 과정을 통해 수집된 사용자의 데이터는 그 자체만으로 큰 가치가 발생하지는 않습니다. 가공하지 않은 Raw 데이터는 상대적으로 낮은 신뢰성과 높은 노이즈를 지니고 있으며, 도메인에 특화된 데이터이기 때문에 그 활용이 제한적입니다. 따라서 광고주가 데이터를 사용하려면 Raw 데이터를 가공하여 광고에 사용되기 용이한 개인 데이터나, 사용자의 예상 구매율 및 재방문율 등의 인사이트 데이터로 바꿔주는 가공 과정이 필요합니다.
+## Data Refinery
+The data collection process earlier doesn’t possess actual value by itself. Unrefined Data which is ‘raw data’ has high probability of unreliable results and high frequency noise. Raw data itself has specialization on domain platform so that utilization is limited. Therefore, in order for advertisers to use data, it is necessary to analyze the raw data to personal data that can be easily used in advertisements or the insight data such as ‘user's estimated purchase rate’ and ‘return rate’.
 
-에어블록에서의 데이터 가공 과정은 가공자가 수행합니다. 가공자는 데이터 사용권을 가지는 데이터 가공 주체들로서, 광고 데이터 분석 업체들에 의해 운영되는 자동화된 데이터 분석 엔진이 될 것입니다. 가공자는 어떤 개인에 대해 수집자가 모은 데이터를 가공해, 뒤에 서술될 인사이트 마켓 및 개인 데이터 마켓에서 컨슈머에게 가공한 데이터를 판매하고 인센티브를 얻습니다.
+The data processing in the Airbloc is performed by the Data Refinery. Refinery will be data processing entities with data usage rights and will be automated data analysis engines operated by advertising data analysts. The refinery processes the data collected by the collector for an individual and then sells the processed data to the consumer in the insight market and the personal data market described later and obtains incentives.
 
-가공자의 가공 과정은 블록체인 밖에서 이루어집니다. 가공자는 수집자가 모은 데이터를 Export해 가공하고, 다시 Import해 마켓플레이스에 매물을 등록하게 됩니다. 일반적으로 블록체인 밖에서 데이터를 처리하는 것은 데이터의 무단 탈취 문제 및 데이터 이스케이핑 문제를 야기하지만, 가공자가 처리하는 데이터는 익명화된 데이터이기 때문에 무가치하므로 그러한 위험이 사라집니다.
+The refining process is done outside the blockchain. The refinery will export the data collected by the collector, process it, import it, and register the listing in the marketplace. In general, processing data outside of the blockchain causes data corruption and data escaping problems, but the risk is eliminated because the data processed by the parser is anonymized and thus worthless.
 
-그렇게 해서 데이터가 가공자에 의해 가공되면 개인 데이터나 인사이트 데이터가 됩니다.
+So, after processed by the refinery, it becomes Personal Data or Insight Data.
 
-* **개인 데이터**는 가공자가 개인에 대한 속성을 분석한 내용입니다. 예를 들어 Bob이라는 사람이 애견 앱을 많이 설치했다는 간접 데이터가 있고, 강아지를 좋아한다는 답변을 한 직접 데이터가 있다면 가공자는 이러한 데이터를 통해 "Bob이 개를 키운다"고 분석한 개인 데이터를 만들 수 있습니다.
-* **인사이트 데이터**는 주로 광고에 쓰일 수 있는 지표입니다. 예를 들어 A라는 상품에 대한 개인의 구매율이나, B라는 상품으로의 전환 확률 등이 될 수 있습니다. 인사이트 데이터는 극도로 정형화되고 정량적인 데이터이며, 컨슈머의 수요에 의해 온디맨드로 제공된다는 특징이 있습니다. 컨슈머들은 사용자 세그먼트에 대한 특정 지표를 쿼리하고, 그에 대해 가공자들이 결과를 도출하면, 그중 원하는 가공자의 결과에 대해 값을 지불하거나 모든 가공자의 결과에 대해 값을 지불하고 평균값을 매기는 방식으로 인사이트 데이터를 소비하게 됩니다. 
 
-### 미지의 개인 드러내기
+* **Personal Data** is the analysis of the attributes of the user. For example, if there is indirect data that a person named Bob has installed a lot of dog apps, and direct data that Bob likes pet, the refinery can use these data to create personal data that "Bob breeds a dog.".
+* **Insight Data** is an indicator that can be used primarily in ads. For example, the purchasing rate of an individual for a product A or the probability of conversion to a product B may be. Insight data is extremely structured and quantitative data and is characterized by on demand demand from consumer demand. Consumers can query a particular indicator for a user segment and, if the refinery has derived the result, either pay for the result of the desired refinery, or pay for and average the results of all refineries. Data will be consumed.
 
-컨슈머 사이드 관점에서, 가공자가 하는 일은 어떤 미지의 개인을 드러내는 것이라고 볼 수 있습니다. 사용자의 직접 데이터 답변 기록이 축적되고 간접 데이터가 축적될 수록 가공자는 미지의 개인에 대해 아는 내용이 점점 많아집니다. 가공자는 자신들만의 분석 기법을 통해 이러한 개인 드러내기 (Revealing Person) 과정을 더 정확한 방향으로 촉진시키게 됩니다.
+### Revealing Unknown Person
 
-### 직접 데이터의 효용 극대화 효과
+On the view of consumer side, The task that the refinery does can be seen as revaling some unknown person. The more person's direct data and indirect data accumulates, the more the refinery will know about that person. The refinery can use their own analysis methods to make higher accuracy of revaling person.
 
-에어블록에서 가공자의 존재는 직접 데이터의 효용을 극대화하는 역할을 수행합니다. 직접 데이터는 사용자의 행동에 의한 간접 데이터보다 신뢰도가 대체로 낮은 편이지만, 간접 데이터와 직접 데이터를 함께 사용한다면 효용을 극대화시킬 수 있기 때문입니다. 예를 들어 간접 데이터가 직접 데이터의 형식적 증거로 작용해 직접 데이터의 신뢰도를 높여주는 역할로 사용될 수 있고, 직접 데이터를 컨조인트 분석 기법 (Conjoint Analysis)이나 유사타겟 엔진 (Lookalike Target Engine) 등의 모형에 학습 데이터로 사용해 분석 모형의 성능을 높이는데 사용될 수 있습니다. 가공자는 직접 데이터와 간접 데이터를 상호작용시켜 가공된 데이터의 신뢰도와 정확도를 높임으로서, 컨슈머의 데이터 효용과 자신의 이익을 극대화할 뿐만 아니라 직접 데이터의 효용가치를 올릴 수 있습니다. 자세한 내용은 부록의 [간접 데이터와 직접 데이터의 상호작용을 통한 모수 확대](#간접-데이터와-직접-데이터의-상호작용을-통한-모수-확대) 항목에서 확인할 수 있습니다.
 
-### 데이터의 신뢰도 검증
+## Marketplace
 
-앞서 설명한 대로, 가공자는 간접 데이터를 직접 데이터의 형식적 증거로 작용시키는 식으로 직접 데이터의 신뢰도를 보장할 수 있으며 직접 데이터와 간접 데이터의 상호작용을 통해 더 큰 효용가치의 데이터를 가공해 낼 수 있습니다. 가공자는 이 과정에서 논리가 맞지 않는 데이터를 발견할 수 있으며, 이러한 데이터에 대해서 클레임을 걸 수 있습니다. 자세한 내용은 [데이터 교차검증](#데이터-교차검증) 항목에서 확인할 수 있습니다.
-
-## 마켓플레이스
-
-마켓플레이스는 수집된 직·간접 데이터 및 이를 가공한 데이터의 거래가 이루어지는 곳입니다. 마켓플레이스는 **데이터 마켓**과 **인사이트 마켓**이라는 두 가지 종류로 나뉩니다.
+The Marketplace is where transactions of collected direct and indirect data and processed data are made. The Marketplace is divided into two categories: **Data Market** and **Insight Market**.
 
 <p align="center"><img src="./assets/marketplace.png" style="margin-top:20px; margin-bottom:20px;" width=700></p>
 
-**데이터 마켓** 에서는 개인 데이터의 판매가 이루어집니다. 데이터 마켓은 Raw 데이터 마켓과 개인 데이터 마켓으로 구성되는데, Raw 데이터 마켓에서는 수집자가 모은 데이터를 가공자를 거치지 않고 컨슈머에게 직접 판매합니다. 개인 데이터 마켓에서는 가공자가 가공한 개인 데이터를 판매합니다. 개인 데이터는 주로 사용자의 상태나 관심에 대해 가공자가 분석한 내용으로, 예를 들어 30대 여성이 키우는 애완동물의 종류에 대한 데이터가 될 수 있습니다.
+In **Data Market**, the refinery or the collector can sell their personal data. The data market consists of Raw Data Market and Personal Data Market. In the Raw Data Market, collectors' data delivers directly to consumers without going through the refineries. The Personal Data Market sells data processed by the data refinery. Personal data is primarily the analysis of the user's status or interest, for example, data about the type of pets that women who are more than age 30 raises.
 
-**인사이트 마켓**  에서는 광고주의 의사결정에 쓰일 수 있는 인사이트 데이터를 가공자가 판매합니다. 인사이트 데이터는 주로 광고에 쓰일 수 있는 지표를 예측한 수치입니다. 예를 들어 A라는 상품에 대한 개인의 예상 구매율, B라는 상품으로의 전환 예상률 등이 될 수 있습니다. 
+**Insights Market** sells insights data that can be used to make an advertiser's decision. Insight data is an indicator that can be used primarily in ads. For example, the purchasing rate of an individual for a product A or the probability of conversion to a product B may be.
 
-### 판매 방식
+### Sale Methods
 
-데이터가 판매되는 방식에는 **단순 판매**, **세그먼트 판매**와 **알려진 세그먼트에 의한 판매**가 있습니다.
+The way in which data is sold includes *Simple Sales*, *Segment Sales*, and *Sale by Known Segments*.
 
-**단순 판매**는 판매자가 만든 데이터 매물을 구매하는 것입니다. 예를 들어 가공자가 "개를 좋아하는 사람 100,000명의 관심 데이터"라는 매물을 올리면 컨슈머가 해당 데이터를 구매하는 방식입니다.
+**Simple Sales** is purchasing data sales which is made by merchandiser. For example, if a refinery put up “100,000 people’s data whom likes dog.” for sale, then consumer will purchases it.
 
-**세그먼트 판매**는 컨슈머의 쿼리에 의해 온디맨드로 이루어집니다. 컨슈머가 판매자들에게 특정 세그먼트 조건을 쿼리하면, 판매자들이 조건에 해당하는 사용자 수를 반환하고, 컨슈머가 구매를 확정할 시 조건에 해당하는 사용자들의 데이터를 판매하는 방식입니다. 예를 들어 컨슈머가 관심 데이터 마켓에서 "요리를 좋아하는 20대 직장인 남성"이라는 세그먼트를 쿼리하면 가공자들은 자신들이 분석한 관심 데이터를 바탕으로 해당 조건에 부합하는 사용자 수를 반환하고, 컨슈머가 세그먼트를 구매하면 해당 사용자들의 광고 ID 셋과 추가적인 데이터를 제공하게 됩니다.
+**Segment Sales** are made on demand by query of the consumer. When a consumer queries a seller for a particular segment condition, the seller returns the number of users corresponding to the condition, and the consumer sells the data of the user corresponding to the condition when confirming the purchase. For example, if a consumer queries a segment of interest in a data market that is "a man in his 20s who likes to cook", the processors return the number of users that meet that condition based on their analyzed interest data, Will provide you with a set of ad IDs and additional data for those users.
 
-**알려진 세그먼트에 의한 판매**는 특정 세그먼트 조건을 제시하는 대신 컨슈머가 자신이 가지고 있는 광고 ID 셋을 업로드하는 방식입니다. 예를 들어 컨슈머가 인사이트 데이터 마켓에 광고 ID 5,000개를 업로드하고 이 유저들의 구매 확률을 쿼리하면 가공자들은 그 광고 ID중 에어블록이 가진 광고 ID와 겹치는 사용자들의 구매 확률을 판매하게 됩니다.
+**Sale by Known Segments** is a way for consumers to upload their own set of advertising IDs instead of presenting specific segment queries. For example, if a consumer uploads 5,000 ADIDs to the Insight Data Market and queries the purchase probability of those users, the refinery will sell users' purchase probabilities who are both in Airbloc and uploaded ADID sets.
 
-### 가격 책정 방식
 
-가격 책정 방식엔 Reward-Once 방식과 Reward-Per-Pay, 그리고 이를 섞은 하이브리드 방식이 있습니다.
+### Pricing
 
-* Reward-Once 방식은 처음에 수집자가 데이터를 수집하면서 프로바이더에게 값을 지불하고, 이후에 데이터의 재판매 수익을 전부 다 가져가는 방식입니다. 이 방식은 프로바이더의 리스크가 적지만, 프로바이더는 재판매 수익을 얻지 못한다는 단점이 있습니다.
-* Reward-Per-Pay 방식은 수집 과정에서 값을 지불하지 않는 대신, 데이터가 팔릴 때마다 수집자와 프로바이더가 수익을 분배받는 방식입니다. 이 방식은 수집자의 리스크가 적지만, 프로바이더는 상대적으로 적은 수익을 얻을 수 있다는 단점이 있습니다.
-* 하이브리드 방식은 이를 섞은 방식으로, 서로의 리스크를 효과적으로 헤징할 수 있습니다.
+Airbloc has three data pricing method. One is “Reward-Once”, and the other is “Reward-Per-Pay”, and there’s hybrid model that combined two methods.
 
-가격은 일반적으로 수집자가 결정합니다. 물론 상대 거래 주체도 자신이 원하는 가격을 주장할 수 있게 흥정 (Bargaining) 기능을 제공하여 데이터의 가격이 시장에 의해서 적정 선으로 결정될 수 있게 합니다. 에어블록 네트워크에는 자체적으로 데이터의 적정 가격을 제시하는 기능이 없지만, 적정한 데이터 가격 형성을 위해 에어블록 메인 거래소 등의 프론트엔드 앱에서는 ABL 토큰의 지수이동평균 가격과 자체적인 데이터 가치 산정 알고리즘을 통해 적정가를 추천하는 기능을 제공할 예정입니다.
-
-## 에어블록의 토큰 경제
+## Airbloc Token Economics
 <p align="center"><img src="./assets/token-overview.png" width="650px" style="margin:30px;"></p>
 
-에어블록의 토큰은 **에어블록 (ABL)** 과 **에어블록 리워드 (AIR)** 로 나뉩니다. ABL은 ERC20 형태의 거래 가능한 토큰이며, AIR는 개인에게 귀속되어 **전송 및 거래가 불가능**한 대신 ABL로 1:1 교환만 가능한 토큰입니다.
+Airbloc has two tokens. One is the **Airbloc (ABL)**, and the other is **Airbloc Reward (AIR)**. ABL is a transferable ERC20 token, and AIR is **non-transferrable** and belong to the user but can be converted to ABL by 1:1.
 
-> 에어블록에서의 토큰은 Ethereum 위에서 ERC20 형태로 발행되지만, 추후 기술적 요구사항에 의해 플랫폼이 변동될 경우 ERC20 ABL 토큰은 스냅샷되어 새로운 플랫폼에서의 토큰이나 코인으로 전환될 수 있습니다.
-
-
-### 에어블록 (ABL) 토큰
-**ABL**은 에어블록 내에서의 거래 수단이나 사용료 지불 수단으로 쓰입니다. ABL을 얻으려면 거래소에서 구매하거나, AIR를 ABL로 전환해야 합니다. 광고주가 데이터를 구매하려면 ABL을 지불해서 데이터를 구매하며, 데이터 캠페인을 집행하면 네트워크에 ABL을 지불해야 합니다. 또한 에어블록에 앱을 등록해 데이터를 수집하거나, 가공자가 되어 데이터를 가공하려면 일정량 이상의 ABL을 홀딩해야 합니다. 이처럼 ABL은 네트워크에 참여하기 위한 수단으로서의 토큰입니다.
-
-### 에어블록 리워드 (AIR) 토큰
-**AIR**는 에어블록 내에서의 생산적인 행위에 대한 보상으로 지급되며, 지급된 AIR은 개인의 신뢰도로 쓰이거나 거버넌스에 쓰일 수 있습니다. 사용자가 데이터를 제공 혹은 신뢰도 마이닝에 참여하거나, 검증자가 노드를 유지하거나, 가공자가 가공한 데이터가 팔릴 때마다 AIR로 보상을 받습니다. 이렇게 받은 AIR은 개인에게 귀속되며, 타인에게 전송할 수 없습니다. 인위적으로 ABL을 AIR로 전환하는 것 또한 불가능합니다.
-
-AIR는 개인의 **기여도**로 사용됩니다. AIR를 받으려면 데이터를 제공 혹은 신뢰도 마이닝을 통해 데이터에 신뢰 가치를 더하거나, 데이터의 검증 및 가공을 하는 식으로 네트워크에 가치를 더하는 기여를 해야 하기 때문에 개인이 보유한 AIR의 양은 개인의 네트워크에 대한 기여도라고 볼 수 있습니다.
-
-AIR를 통해 **거버넌스**에 참여할 수 있습니다. 네트워크에 거버넌스가 생길 때, 개인은 자신이 보유하고 있는 AIR 양에 비례한 Voting Power를 가집니다. 이는 네트워크의 운영 측면에서 봤을때 네트워크에 많이 기여했을수록 가버넌스에서의 발언권을 크게 주는 것이 옳기 때문입니다. 거버넌스에 대한 내용은 다음 버전의 기술 백서에 자세히 설명될 예정입니다.
-
-AIR는 ABL의 공급을 줄이는 역할을 합니다. 기여도가 높으면 광고주가 자신의 데이터를 구매할 가능성이 높아지고 자신의 데이터에 대한 가치가 고평가되기 때문에 개인은 더 많은 데이터 수익을 얻을 수 있습니다. 따라서 AIR를 바로 ABL로 교환하기 보다 홀딩을 유도할 수 있습니다. 또한 비슷한 참여도의 사람들과 비교했을 때 기여도가 너무 낮으면 신뢰도가 낮게 평가되어 데이터가 잘 판매되지 않을 수 있으므로 개인은 네트워크에 참여할수록 일정량 이상의 AIR를 홀딩하는 것이 권장됩니다.
-
-AIR는 ABL로 1:1 교환이 가능합니다. AIR는 ABL로 교환하는 데에 별도의 시간 지연이 존재하지 않기 때문에 이는 Steem에서의 Power Down 과정보다 훨씬 편리하다는 장점이 있습니다. 단 ABL 토큰 가치가 급격히 상승하는 등의 상황에서 AIR 홀더들에 의한 덤핑을 방지하기 위하여 네트워크에서 시간당 ABL로 교환할 수 있는 AIR의 양은 **현재 네트워크에 생성된 AIR 양의 0.1%로 제한합니다**. 또한 돈을 주고 네트워크에서의 평판을 사는 행위를 방지하기 위해, **ABL은 AIR로 교환할 수 없습니다**.
+> ABL Token is currently issued on Ethereum as ERC20 token. Later, if the platform is switched to another platform because of the technical requirements, ERC20 ABL Tokens will be snapshoted and migrated to the coins, or tokens on the new platform.
 
 
-### AIR Pool (에어블록 리워드 풀) 
+
+### Airbloc (ABL) Token
+**ABL** is used as a means of trading, or data usage fee. To get ABL, you need to buy it from exchange or convert AIR to ABL. Advertisers pay by ABL to purchase data, or pay the network to run data campaign. And you need to hold more than a certain amount of ABL in order to register your app to collect data, or to be a refinery to process data,. Thus, ABL is a token as a means to participate in the network.
+
+### Airbloc Reward (AIR) Token
+**AIR** is given as a reward for productive behavior within Airbloc, and the rewards can be used as a personal confidence or used in governance. The user is rewarded with AIR when user provides data or participates in reliability mining, and the gatekeeper is rewarded with AIR for maintaining the Aero Network node, and data refinery.
+
+AIR is used as an **Contribution Level** of individual users. The amount of AIR the individual user holds can be seen as the contribution level of the individual to the network, since the user need to provide data or add credibility value to data by participating in reliability mining to get AIR.
+
+AIR can be used a means of **Governance**. In network governance – consensus on subjective matters of important decisions that cannot be solved automatically – individuals have a vote that is proportional to the amount of AIR they have. This is because it is right to give larger voice to the participants who contributed more in the network. We will provide details about the governance in the next version of the technical whitepaper.
+
+AIR plays a role of reducing the supply of ABL in the token economy.  If the user has higher contribution level, advertisers will likely to purchase their data and their data will be valued higher, so they can earn more data revenue. Therefore, rather than selling AIR immediately by converting them to ABL, holding the AIR is more recommended. Also, it is recommended that individual users hold more than a certain amount of AIR as they participate in the network, because if the user’s participation level increases, compared to user with similar participation level, the user’s contribution level will be lower than them and the user will get lower reputation.
+
+AIR is 1:1 exchangable with ABL. There is no delay for exchanging AIR to ABL, so it’s more convinient than Power Down process in Steem. However, to prevent dumping by AIR holders in situations such as a sudden increase in ABL token value, the maximum amount of AIR that can be exchanged for ABL per hour is **limited to 0.1%** of the amount of AIR currently generated in the network. Also, In order to prevent buying reputation on the network, **ABL cannot be changed to AIR.**
+
+
+
+### AIR Pool 
 
 <p align="center"><img src="./assets/air-pool.png" width="660px" style="margin:20px;" ></p>
 
-에어블록은 검증 과정에서 지급해야 할 리워드와 네트워크 수수료 등의 운영비를 충당하기 위하여 AIR Pool (에어블록 리워드 풀)을 유지합니다. 데이터를 거래할 때 부과되는 수수료, 가공자가 주기적으로 지불하는 데이터 사용권료 및 패널티로 인한 벌금 등은 AIR Pool에 쌓이며, 이는 후술할 검증자 및 신뢰도 마이닝 참여자에게 리워드로 주어질 수 있고 에어블록의 지속적인 운영을 위해 네트워크 수수료 등의 유지 비용으로 사용될 수 있습니다.
+Airbloc maintains an AIR Pool (Airbloc Reward Pool) to cover the verification rewards, operation fees such as network fee. The fees charged when trading data, the data usage right fees paid by the refinery periodically, and penalties are accumulated in the AIR Pool, and it can be given as reward to gatekeeper or reliability mining participants, which will be described in below.
 
-AIR Pool에는 ABL과 AIR 모두 쌓일 수 있지만, 실제로 풀 안에서는 ABL로 교환되어 유지됩니다. 그리고 검증자나 신뢰도 마이닝 참여자에게 지급되는 보상은 AIR로 교환되어 지급됩니다. 또한 네트워크 초기 운영 과정에서의 안정적인 리워드 지급을 위해, 전체 토큰 발행량의 10%를 AIR Pool에 리저브로 할당합니다.
+Both AIR and ABL can be in AIR Pool, but they are actually converted to ABL in the pool. Yet, the reward given to gatekeeper or reliability mining participants. In addition, to facilitate early participation and ensure a stable reward payment, 10% of the total ABL token distribution is allocated to the AIR Pool as a initial reserve.
 
-AIR Pool과 관련된 세부적인 수치는 개발 단계나 파일럿 테스트 단계에서의 시뮬레이션 결과 및 운영 결과에 의해 변동될 수 있습니다.
-
-
-## 신뢰도 검증 시스템
-데이터 거래의 문제점은 상호 거래 주체간의 신뢰성을 보장할 수 없다는 것입니다. 데이터를 구매하는 입장에서는 거래되는 데이터와 거래 대상을 신뢰할 수 없고, 데이터를 판매하는 입장에선 구매자를 신뢰할 수 없습니다. 이렇게 거래 주체에 대한 신뢰성 문제와 데이터 신뢰성에 대한 문제가 존재하는데 에어블록은 거래 주체에 대한 신뢰성을 개인 신원 인증과 토큰에 기반한 **개인 신뢰도 평가 시스템**을 통해, 데이터에 대한 신뢰성을 **데이터 교차 검증**과 **신뢰도 마이닝**을 통해 해결합니다. 
-
-물론 개인과 데이터의 신뢰도를 평가함을 떠나서 악의적인 목적을 가지고 행동하는 주체들이 생겨날 수 있습니다. 에어블록은 이러한 주체들을 막기 위해 개인에 대한 신원 인증과 사기 탐지 시스템을 통해 시빌 공격 (Civil Attack) 및 사기 (Fraud)의 가능성을 차단합니다.
+The detailed values of AIR Pool may change depending on the results of simulation at the development or operation at pilot test phases.
 
 
-### 개인에 대한 신원 인증 (Individual User Identification)
+## Reliability Proof System
+The problem of data trading is that you cannot guarantee the credibility of the transaction between the players. The buyer cannot trust the data purchased and the seller. The seller cannot trust the buyer. Airbloc solves the player’s credibility problem by **Personal Evaluation System** based on contribution score and participation score for the network. Also credibility of the data can be ensured by Data Cross-Validation and **Data Reliability Mining**. 
 
-앱은 사용자들에 대해 개인에 대한 신원 인증(KYC)을 진행해야 합니다. 신원 인증의 수단은 전화번호 인증, 소셜 서비스 로그인 등이 될 수 있으며 uPort, Civic과 같은 탈중앙화된 신원 서비스가 될 수도 있습니다. 앱은 사용자를 등록할 때 사용자의 신원 정보를 해시화해서 에어블록 네트워크에 제공해야 합니다. 신원 인증 과정은 악의적인 계정을 생성해 네트워크를 공격하는 시빌 공격을 경감하는 효과를 지닙니다.
+Of course, there will be malicious users regardless of credibility evaluation. However, Airbloc will prevent these malicious users from commiting Sybil Attacks and Frauds by doing KYC and activating fraud detection system.
+
+| Stakeholder  | Personal Reliability | Data Reliability |
+|--------------|:----------------------|:------------------|
+| Apps         | Personal Identification (KYC) | -       |
+| Gatekeepers  | Automated Fraud Detection | Automated Fraud Detection<br>Data Validation       |
+| Data Refinery| -               | Data Cross-Validation |
+| Users        | -               | Data Reliability Mining |
+| Network      | Personal Reputation Evaluation | Data Reliability Mining |
+
+### Personal Identification (KYC)
+
+Apps needs to execute KYC for the individual users. The means of KYC include phone number opt-in, social logins and it can be other decentralized services like uPort and Civic. Apps need to hash user profile attributes such as email and phone number and provide it to Airbloc Network. KYC can mitigate Sybil Attacks of auto-generating malicious accounts to attack the network.
 
 
-### 사기 탐지 시스템 (Fraud Detection System)
-에어블록에 네트워크에는 검증자에 의해 Aero 네트워크상에서 이루어지는 사기 탐지 시스템 (Fraud Detection System)이 있습니다. 검증자들은 자신의 자동화된 노드를 통해 일정 패턴에 맞는 악성 사용자(Fraud) 들을 탐지하게 됩니다. 검증자들은 Fraud를 검출하기 위해, 사용자에 대해 라운드마다 다음과 같은 검증 태스크들을 지속적으로 수행합니다.
+### Automated Fraud Detection
+Airbloc Network detect and prevent fraudulent activities by Gatekeepers on Aero Network. With their automated nodes, Gatekeepers detect certain malicious users who show specific patterns in data. In order to detect fraud, they repeatedly perform detection tasks as below.
 
-* 직접 데이터 답변 패턴 검증
-* 고유 식별 정보 유효성 검증
-* 네트워크 사용 패턴 검증
+* Analyze Direct Data Answering Patterns
+* Validate & Cross-check Unique Identifiers
+(ADIDs, IMEIs, Device IDs, Hashed Emails, Hashed Phone numbers, etc.)
+* Analyze Network Usage Patterns
 
-검증자들은 태스크마다 작업을 수행하는 데 필요한 부분적인 데이터를 받고, 해당 태스크를 수행한 후 이 사용자가 Fraud인지 아닌지에 대한 여부를 Pass / Fail로 판단합니다. 이후 지분 투표를 통한 합의를 실시해 과반수 의견이 각 태스크의 결과로 채택됩니다. 한 라운드 안의 모든 태스크의 2/3 이상을 Fail하면 해당 사용자는 Fraud로 판정되며, 에어블록 네트워크에서 패널티를 얻게 됩니다.
+Gatekeepers will receive only partial data for the completion of the task and will make Pass or Fail decision of the target user as being fraudulent. Afterwards, voters will reach consensus with majority vote; each voter will have voting power according to their stake of AIR tokens. If ⅔ fraud detections point to the Fail result, then this user will be identified as a fraudulent user and the target user should pay penalty to the network.
 
 
-### 개인 평가 (Personal Evaluation)
+### Personal Reputation Evaluation
 
-앞선 기능이 악의적인 참여자를 방지하기 위한 수단이라면, 개인 평가는 좋은 참여자를 평가하기 위한 수단입니다. 에어블록은 개인 평가를 통해 토큰 경제에 기반한 지표인 기여도와 참여도, 그리고 참여도별로 상대적인 기여도 순위를 매긴 지표인 명성을 부여합니다. 이 세 가지 지표는 특성에 따라 광고주나 가공자가 데이터 및 세그먼트를 선별할 때 참고 자료로 사용되거나, 네트워크에서 신뢰도 마이닝 대상을 선별할 때 사용될 수 있습니다.
+The previous fraud detection is to prevent malicious users from participation, personal reputation evaluation is to sort out good users to assign them chance to take part in Airbloc’s governance. Airbloc computes reputation score by criteria including Contribution Level and Participation Level based on Airbloc’s token economics; reputation score will be a relative score across users. These three metrics will be used as a reference to advertisers and refinies when they create segment or compute new user attribute, or it can be used as a criteria for selecting credibility mining eligible users. 
 
 <p align="center"><img src="./assets/personal-evaluation.png" width="700px" style="margin-top:20px;margin-bottom:20px;"></p>
 
-#### 기여도 (Contribution Level)
+#### Contribution Level
 
-기여도는 에어블록에서 가치를 생산함으로서 받은 AIR 토큰의 보유량입니다. 앞서 설명한대로, 신뢰도 마이닝에 참여하거나 데이터를 제공함으로써 AIR 토큰을 지급받은 것은 에어블록 네트워크에 가치를 더한 것으로 볼 수 있으므로 사용자의 AIR 토큰 보유량을 네트워크에 한 기여의 정도로 사용할 수 있습니다.
+**Contribution Level** is amount of AIR holding which is given the user by creating value in this ecosystem. By participating in credibility mining or submitting data to the network, the users can be deemed as adding values to the Airbloc Network, thus the amount of AIR hold by the user can be a metrics reflecting the user’s contribution to the network. 
 
-중요한 것은 기여도가 사용자의 **현재 AIR 토큰 보유량**이란 점입니다. AIR 토큰을 ABL로 바꿔 출금하면 기여도는 감소합니다. ABL을 AIR 토큰으로 다시 바꿀 수는 없으므로, 사용자가 감소한 기여도를 다시 올리려면 데이터 제공이나 신뢰도 마이닝을 통해 AIR 토큰을 받아야 합니다. 이러한 점에서 기여도는 토큰 경제적으로 ABL 공급을 조절하고 네트워크에 더 많은 기여를 유도하는 효과를 발생시킵니다.
+Important thing to note is contribution level is the **“current” holding amount of AIR** by the user. Once you exchange AIR to ABL, then contribution level diminishes. Since you cannot reversely convert ABL to AIR, thus in order to recover your contribution level, you need to acquire AIR token by credibility mining. In this sense, contribution level adjusts ABL supply and induces users to contribute more to the network for higher contribution level. 
 
+#### Participation Level
 
-#### 참여도 (Participation Level)
+Participattion level is the metrics to measure how long and how diligently this user has been participating in the network. Participation level is computed by the formula as below.
 
-참여도는 사용자가 얼마나 오랜동안 성실하게 네트워크에 활동했는지를 나타내는 지표입니다. 참여도는 다음과 같은 공식에 의해 계산됩니다.
 
 <p align="center">
-<img src="https://latex.codecogs.com/svg.latex?P_U%20%3D%20%5Clog(%5Csum%7Bb_%7BR%7D%7D)%20%5Clog(n_%7BD%7D)%20%5C%2C%20(1%20-%20d)%5Et">
+<img src="https://latex.codecogs.com/svg.latex?P_U%20%3D%20%5Clog(%5Csum%7Bb_%7BR%7D%7D)%20%5Clog(n_%7BD%7D)%20%5C%2C%20(1%20-%20d)%5Et" width="300px">
 </p>
 
 <!--$$P_U = \log(\sum{b_{R}}) \log(n_{D}) \, (1 - d)^t$$-->
 
-* ![sum{b_{R}}](https://latex.codecogs.com/svg.latex?%5Csum{b_{R}})는 지금까지 사용자가 받은 AIR의 양
-* ![n_D](https://latex.codecogs.com/svg.latex?n_D)는 사용자가 제공한 데이터 수
-* ![d](https://latex.codecogs.com/svg.latex?d)는 감가상각 계수, ![t](https://latex.codecogs.com/svg.latex?t)는 시간
+* ![sum{b_{R}}](https://latex.codecogs.com/svg.latex?%5Csum{b_{R}}) is the total amount of AIR that the user has received so far
+* ![n_D](https://latex.codecogs.com/svg.latex?n_D) is the number of data points produced by the user
+* ![d](https://latex.codecogs.com/svg.latex?d) stands for a depreciation coefficient, ![t](https://latex.codecogs.com/svg.latex?t) stands for time
 
-신뢰도 마이닝 등에 많이 참여해 AIR 토큰을 많이 받았을수록, 데이터를 많이 제공할수록 참여도는 높아집니다. 기여도와는 달리, 참여도는 AIR 토큰의 현재 잔고가 아닌 AIR 수입에 비례하기 때문에 AIR를 ABL로 교환해도 참여도에는 영향을 주지 않습니다.
+Participation level will rise if the user receives more AIR token by taking part in credibility mining. Unlike contribution rate, participation level goes proportional not to the current balance of AIR, but to the amount of income of AIR, thus even if certain portion of AIR is converted to ABL, participation level will not be affected.
 
-참여도는 명성을 평가할 구간을 나누는 역할을 하며, 후술할 신뢰도 마이닝의 대상이 되는 모범 시민을 선정하는 기준이 되기도 합니다. 따라서 높은 참여도를 가질수록 신뢰도 마이닝에 더 많이 참여할 수 있게 되어 많은 보상의 기회가 생기게 됩니다. 하지만 감가상각 계수에 따라 참여도는 시간이 지날수록 조금씩 감소하기 때문에, 네트워크에서 꾸준한 활동을 해야 참여도를 유지하거나 높일 수 있습니다.
+Participation level works as a criteria for splitting a range of reputation level into multiple tiers, and can act as a criteria for selecting “Exemplary Citizens” who are eligible for participating in reliability mining. That means, the user with higher participation level means the greater the chance of participating in reliability mining, resulting in many reward opportunities. However, depending on the depreciation factor, participation decreases little by little over time, so you need to maintain a steady network of activities to maintain or increase your engagement.
 
-#### 명성 (Reputation)
 
-마지막으로 명성은 **비슷한 참여도를 가진 사용자끼리의 기여도 순위**입니다. 해당 참여도에 따라 참여 구간 (Tier)를 나누어 참여 구간에서 자신의 기여도의 상대적 순위를 명성으로 사용합니다.
+#### Reputation
+
+Lastly, Reputation is **the relative ranking of the users sorted by contribution rate** who belong to the same tier based on the participation rate. In other words, Airbloc uses relative ranking of the contribution rate within the users in the same tier based on the participation rate.
 
 <p align="center">
-<img src="https://latex.codecogs.com/svg.latex?{R_U}%20%3D%201%20-%20%5Cfrac%7B%7Brank%7D(C_U%2C%20%5Cmathbb%7BT%7D)%7D%7BC(%5Cmathbb%7BT%7D)%7D%2C%20%5C%2C%20where%20%5C%2C%20%20%5Cmathbb%7BT%7D%20%3D%20%7Btier%7D(P_U)"></p>
+<img src="https://latex.codecogs.com/svg.latex?{R_U}%20%3D%201%20-%20%5Cfrac%7B%7Brank%7D(C_U%2C%20%5Cmathbb%7BT%7D)%7D%7BC(%5Cmathbb%7BT%7D)%7D%2C%20%5C%2C%20where%20%5C%2C%20%20%5Cmathbb%7BT%7D%20%3D%20%7Btier%7D(P_U)" width="400px"></p>
 
 <!-- $$
 {R_U} = 1 - \frac{{rank}(C_U, \mathbb{T})}{C(\mathbb{T})}, \, where \,  \mathbb{T} = {tier}(P_U)
 $$ -->
 
-예를 들어 참여도가 100 미만인 "신입"이라는 참여 구간이 있다고 가정하고, 한 유저가 신입 구간에서 기여도가 상위 3%에 속한다면 명성은 ![0.97](https://latex.codecogs.com/svg.latex?R_U%20%3D%200.97)이 됩니다. 참여도에 따라 구간을 나눠 해당 구간에서 상대적으로 명성을 평가하는 것은, 네트워크의 신규 진입자와 기존 진입자간의 격차를 상쇄해 양극화를 방지하기 위함입니다. 
+For example, suppose there is a tier with users with participation rate under 100 called “newbies”, and if one user belongs to the top 3% of the “newbie” tier, then reputation is ![0.97](https://latex.codecogs.com/svg.latex?R_U%20%3D%200.97). Splitting tiers according to the participation level can prevent polarization between the old participants and the new participants.
 
-### 데이터 교차검증 (Data Cross-Validation)
-데이터 교차검증은 가공자가 사용자의 서로 다른 종류의 데이터에 대해서 교차 검증을 수행했을 때, 데이터 간 상호 위배되는 사실이 발견될 경우 이를 클레임(Claim) 할 수 있는 시스템입니다. 예를 들어 어떤 사용자가 자신의 게임 선호에 대해 No라고 대답했지만 해당 사용자의 앱 사용 내역 데이터에서는 게임 앱이 40% 이상의 사용률을 보인다면 검증자는 이 데이터에 대해 클레임을 제기할 수 있습니다.
+### Data Cross-Validation
+Data Cross-Validation is the system that refinery can file a **claim** on the data of user if the logical contradiction is found on the different types of data. For example, if a user answered No for their game preference, but the app usage history data shows that game app has a usage rate of over 40%, the refinery can file a claim against this data.
 
-가공자가 클레임을 걸면 해당 가공자는 그 데이터를 판매할 수 없습니다. 가공자가 클레임 시스템을 악의적으로 남용하는 것을 방지하기 위해, 한번의 클레임만으로 데이터의 신뢰도를 낮추거나 사용자에게 패널티를 부여하지는 않습니다. 해당 가공자는 클레임이 발생한 데이터를 판매하지 않으므로, 마켓플레이스에서 해당 데이터의 공급이 감소하게 되어 데이터를 제공한 사용자의 보상이 줄어들게 됩니다.
+Once the refinery claimed a data, the refinery cannot sell that data. In addition, a single claim does not lower the reliability of data or penalize the user. This is to prevent the refinery from maliciously abusing the claim system. Eventually, the refinery cannot sell the data that filed the claim, so the supply of that data in the marketplace is reduced and the reward of the user who provided the data will be reduced. 
 
-단 교차검증을 통한 클레임이 2명 이상의 검증자에 의해 3회 이상 누적된 사용자에 대해 데이터 신뢰도 마이닝 과정을 통해 직접적인 신뢰도 검증을 실시하고, 신뢰도 마이닝 결과에 따라 데이터의 신뢰도를 조정합니다.
+However, for users who have accumulated claims more than three times by two or more validators, the data reliability mining process directly verifies the data reliability and adjusts the reliability of the data according to the reliability mining result.
 
-### 데이터 신뢰도 마이닝 (Data Reliability Mining)
+### Data Reliability Mining
 
-신뢰도 마이닝은 **참여도**가 높은 개인 사용자인 **모범시민**을 선정하여, 질문 형식으로 다른 사용자의 답변의 신뢰성을 평가하게 하는 시스템입니다. 직접 데이터의 입력이 가능한 에어블록 클라이언트나 에어블록 캠페인 SDK를 사용하는 개인 사용자에게 질문의 형식으로 해당 데이터를 보여주고, 해당 데이터의 신뢰도를 4가지 단계 (-2, -1, +1, +2)로 판단하게 합니다.
-
-데이터 신뢰도 마이닝의 대상이 되는 데이터는 다음과 같습니다.
-
-* 클레임이 2명 이상의 검증자에 의해 3회 이상 누적된 사용자의 클레임된 데이터
-* 클레임이 걸리지 않은 데이터의 주기적인 무작위 샘플링
-* 판매량 상위 ![k](https://latex.codecogs.com/svg.latex?%5Cbold{k})% 데이터와 하위 ![n](https://latex.codecogs.com/svg.latex?%5Cbold{n})% 데이터에 대한 샘플링
-
-위 데이터들을 참여도를 기준으로 상위 ![k](https://latex.codecogs.com/svg.latex?%5Cbold{k})%의 모범시민 사용자를 선정해 신뢰도 마이닝을 진행합니다. 모범 시민들에게는 일반 데이터 캠페인 질문과 같은 형태로 데이터의 신뢰도를 묻는 질문이 표시되고, 의사결정에 필요한 데이터가 보여집니다. 해당 데이터가 어떤 유저의 데이터인지는 익명화되어 어떤 유저의 데이터인지 알 수 없습니다. 신뢰도를 4단계로 나누어 평가하기 때문에 중간값 공격 또한 불가능합니다.
-
-한 데이터의 신뢰도는 각 모범시민이 평가한 신뢰도를 해당 사용자의 **기여도**에 따라 가중평균을 매겨 산출합니다. 즉 많은 AIR 보상을 홀딩하고 있을 수록 신뢰도 평가에 더 영향력을 줄 수 있습니다. 신뢰도 평가에 참여한 모범시민에겐 해당 사용자의 기여도에 비례해 AIR 보상을 지급합니다.
-
-* 좋은 신뢰도 평가 (R > 0) 를 한 데이터가 판매될때마다 해당 평가를 준 모범시민에게도 AIR 보상을 지급합니다
-* 낮은 신뢰도 평가 (R <= 0)를 받은 데이터에 대해선 추가 보상은 없습니다.
-* 매우 낮은 신뢰도 평가 (R < -1)를 받은 데이터의 경우 해당 데이터를 제공한 사용자의 AIR 보상 수입을 줄이는 패널티를 제공합니다. 사용자의 잔고를 감소시키진 않습니다.
-
-한 주기마다 신뢰도 마이닝을 통해 얻을 수 있는 보상의 총량은 일정합니다. 모범시민들이 신뢰도 마이닝에 무관심하여 적은 사람만이 참여한다면 오히려 개인에게 돌아가는 보상은 늘어나기 때문에, 이는 모범시민들의 참여를 촉진시킬 수 있습니다. 
-
-또한 신뢰도 마이닝에 참여하는 모범시민 수를 유지하고 모범시민이 모든 데이터에 신뢰도 평가를 좋거나 나쁘게 주는 것을 방지하고자, 한 모범시민이 신뢰도 마이닝에 참여해 줄 수 있는 좋은 평점과 나쁜 평점은 각각 일주일에 +10점, -10점으로 한정됩니다. 자세한 값은 이후 시뮬레이션을 통해 결정하여 새로운 버전의 기술백서에서 공개될 예정입니다.
-
-#### 신뢰도 마이닝 고려사항 
-
-* 모범시민이 도덕적으로 평가에 무관심한 상황을 고려해 봅시다.
-    * **나쁜 데이터에 높은 신뢰도 평가를 줄 경우**, 모범시민이 일주일에 줄 수 있는 좋은 점수는 한정되어 있기 때문에 신중히 점수를 사용해 평가한 사람보다 AIR 보상 수입이 떨어집니다. AIR 보상 수입이 떨어지면 참여도의 차이로 인해 자연스럽게 모범시민 대상에서 밀려날 수 밖에 없습니다.
-    * **좋은 데이터에 나쁜 신뢰도 평가를 줄 경우**, 좋은 데이터를 나쁘게 평가하면 해당 데이터를 좋게 평가한 다른 사람보다 추가적인 AIR 보상 수입이 떨어지게 되고 자신의 몫 만큼 다른 사람이 보상을 가져가게 됩니다. 따라서 이 경우 역시 참여도의 차이로 인해 자연스럽게 모범시민 대상에서 밀려나게 됩니다.
-* 참여도 상위 k%의 사용자만 모범시민으로 선정되므로 주기적으로 네트워크에 기여해서 AIR 보상을 얻지 않으면 참여도 순위가 밀려나 모범시민에서 제외될 수 있습니다. 따라서 신뢰도 마이닝 보상을 얻기 위해 네트워크에 꾸준한 참여가 요구됩니다.
-* 신뢰도 마이닝은 일종의 토큰 기반 큐레이션으로 볼 수 있습니다. 홀딩하고 있는 AIR의 양인 기여도가 일종의 큐레이션 보팅 파워가 되고, 데이터에 대한 평가를 하여 좋은 평가 점수의 데이터가 팔릴 때마다 보유중인 큐레이션 보팅 파워에 비례한 보상을 받는다는 점에서 토큰 기반의 큐레이션과 유사합니다. 단, 토큰 기반 큐레이션 시스템과는 달리 에어블록에서는 큐레이션 보팅 파워(기여도, 즉 AIR) 의 구매 및 파워 업이 불가능합니다.
-
-## Aero 네트워크
-
-데이터를 가공 및 검증하고, 평가하는 등의 데이터 관리 작업은 스마트 컨트랙트 위에서 이루어지기에는 아주 복잡한 작업입니다. 에어블록은 데이터 관리 작업만을 Aero 네트워크라는 별도의 자체 블록체인 네트워크 상에서 수행합니다.
-Aero는 에어블록의 데이터 검증 블록체인 네트워크입니다. Aero 네트워크의 노드들은 에어블록 상에서 검증자의 역할을 수행하며, 데이터에 관한 각종 검증 태스크들을 수행하고 그 대가로 블록 보상을 AIR Pool로부터 AIR 토큰으로 얻게 됩니다. Aero 노드들은 검증 작업을 수행한 기록과 해야 할 작업의 목록을 담은 ADT (Active Data Table)에 대한 분산 원장을 유지하게 됩니다. 검증 작업 및 분산 원장에 대한 합의 알고리즘으로는 "Consensus-by-bet" 형태의 Proof-of-Stake 컨센서스를 사용하므로 지분에 비례한 보상을 얻게 됩니다.
+Reliability mining is a system which selects **"Good Citizen"** users with top **Participation Level** and let them evaluate reliability of other users’ direct answers reliability with questionnaires. This system can be implemented in Airbloc main client app or Airbloc SDK installed apps and they can show their users the target data to be validated with reliability mining; the participants of the reliability mining process (data validation process) can pick one of four levels (-2, -1, +1, +2) to reflect their decision of the data’s reliability.
 
 
-Aero 네트워크는 Ethereum 플랫폼 위의 서비스 레이어와 공존합니다. Aero는 오직 데이터 검증의 역할만 수행하며 대부분의 기능은 Ethereum 위의 서비스 레이어에 컨트랙트로서 구현됩니다. 즉 Aero 네트워크의 도입이 메인넷 도입을 의미하진 않습니다. 서비스 레이어와의 통신은 인터체인 플랫폼을 통해서 이루어지며, ICON [[4]](https://docs.icon.foundation/ICON-Whitepaper-EN-Draft.pdf)이나 Cosmos [[5]](https://cosmos.network/whitepaper) 등이 사용될 수 있습니다.
+The following data are target of the data reliability mining:
 
-Aero는 노드들이 데이터에 대해 수행하는 검증 행위인 작업 (Task), 작업을 수행하는 주기인 라운드 (Round), 그리고 데이터별로 필요한 작업의 큐를 담고 있는 ADT (Active Data Table)로 구성됩니다.
+* Data that got more than 3 claims from at least 2 refineries
+* Randomly sampled data from data without claim
+* Randomly sampled data from top k% sold data and bottom n% data 
 
-### 작업 (Task)
 
-작업은 실행 조건과 필요 데이터, 그리고 행동으로 이루어집니다. Aero에는 현재 다음 종류의 작업이 존재합니다.
+Based on the participation level, reliability mining is done by top ![k](https://latex.codecogs.com/svg.latex?%5Cbold{k})% good citizen users for above data. Good citizens are asked questions about the reliability of data in the form of a regular data campaign question, and the data required for decision making is shown. The data is anonymous so nobody knows about given data’s owner. Middle-range attacks are also impossible because data’s reliability is evaluated in four stages. 
+
+The reliability of the data is calculated by weighted averages of the reliability results good citizens gave, according to the **Contribution Level** of each user. In other words, the more AIR you hold, the more influence you can have on the reliability evaluation. Reward will be gived in AIR to good citizens, proportional to the contribution level.
+
+* Every time a data rated with a high reliability (R > 0) is sold, an AIR reward is paid to the good citizen who gave the evaluation.
+* There is no additional reward for a data rated with a low reliability (-1 <= R <= 0).
+* If the data is rated with very low reliability (R < -1), the AIR reward income of the user who provided the data will be decreased. Nevertheless, balances of the user will not be decreased. 
+
+The amount of reward that can be achieved through reliability mining is constant per cycle. If users are indifferent to credibility mining and only a small number of people are involved, the amoiunt of reward for invidual will be increased. So making the amount of total reward constant can encourage the participation of good citizens.
+
+In addition, to maintain the number of good citizens who participate in reliability mining and to prevent participants from maliciously giving good or bad reputation ratings to every data, the amount of good and bad ratings that a good citizen can give are limited to +10 and -10 points per a week. Detailed values will be determined through subsequent simulations and will be described in a next version of the white paper.
+
+#### Considerations of Data Reliability Mining 
+
+* Consider the situation that good citizens are morally indifferent to evaluations:
+  * If the **good ratings are given to the bad data**, the good rating of the user can give in a week is limited, so the user’s AIR reward income will be less than the other’s who gave the rating carefully. If the AIR reward income drops, the user will naturally lose a role of good citizen because of the differences in income. 
+  *  If the **bad ratings are given to the good data**, bad evaluations of the good data will lead to the income differences with the other normal people since the user cannot get the rewards of the good data, so the user will naturally lose a role of good citizen.
+* Only users with the top k% of the participation level are selected as good citizens, so if they don’t regularly contribute to the network and don’t earn AIR rewards, their participation level may be dropped and they may lose a role of good citizen. Therefore, continuous participation in the network is required to do reliability mining.
+* Reliability mining can be viewed as a kind of token-based curation. The amount of holding AIR is a sort of a curation power, and like a curation, you get rewards every time the good rated data you evaluated is sold, proportional to the amount of AIR (curation power). However, unlike the other token-based curation system, it is not possible to purchase curation power (contribution, ie, AIR) in Airbloc.
+
+## Aero Network
+
+Data management tasks, such as proving data and validating data, are a complex task to perform on smart contracts. Airbloc perform data management tasks on its own separate blockchain network called **Aero Network**.
+
+Aero is data validation blockchain network. Nodes of the Aero network plays a validator role in Airbloc, so they do various validation tasks about data and receives block reward from AIR Pool. Nodes maintain a distributed ledger for the Active Data Table (ADT), which contains a queue of tasks to perform and record of the tasks. The Aero network uses a “Consensus-By-Bet” proof-of-stake consensus for verification task and distribution ledger, so gatekeeper gets rewards propotional to the stakes.
+
+
+Aero network coexists with the service layer on the Ethereum. Aero performs only data validation and most of the functionality is implemented as a contract on the service layer on the Ethereum. In other words, introduction of Aero network does not mean introduction of main-net. Communication between Aero network and service layer is done via interchain platform, and ICON [[4]](https://docs.icon.foundation/ICON-Whitepaper-EN-Draft.pdf) or Cosmos [[5]](https://cosmos.network/whitepaper) can be used to there.
+
+Aero is composed by Task, Round, ADT (Active Data Table). Task is a data verification task performed by node, Round is a cycle in which task is performed, and ADT contains a queue of tasks for each data.
+
+### Task
+
+Task is composed by Run Conditions, Required Data, and Action. Currently, Aero has three types of tasks:
 
 * Data Ingestion Task
 * Data Availability Proof Task
 * Fraud Detection Task *(Subjective Task)*
 
-**실행 조건**은 어떤 데이터에 대해 작업이 실행되어야 할 조건을 의미합니다. 예를 들어 Data Ingestion Task의 경우, 데이터가 처음 생성되는 것이 실행 조건이 됩니다. 실행 조건이 충족되면 ADT에서 해당 데이터의 작업 큐에 조건에 해당하는 새로운 작업이 추가됩니다.
+**Run Condition** is a condition on which task to be executed for a certain data. For example, in the case of Data Ingestion Task, the creation of the data would be the run condition. When the run condition is met, a new task corresponding to the condition is added to the job queue of the data in ADT.
 
-**필요 데이터**는 작업이 실행되는데 요구되는 데이터를 의미합니다. 예를 들어 Data Availability Proof Task라면 해당 데이터의 접근 URI와 해시 값이 필요 데이터가 됩니다. **행동**은 이러한 필요 데이터를 가지고 작업이 실제로 수행해야 하는 로직을 의미합니다. 앞의 예에서 행동은 "해당 데이터의 접근 URI를 통해 내려받은 데이터의 해시값과 블록체인에 등록된 해시값이 같은지 비교하는 로직"이 되는 것입니다.
+**Required Data** is the data required for the task to run. For example, in the case of Data Ingestion Task, the access URI of data and hash would be required data. Only anonymized data will be provided to nodes, so the privacy of the data owner will be protected.
 
-이렇게 해서 작업이 끝나면 **결과 (Result)** 가 생성됩니다. 검증 태스크에서는 Yes, No와 같은 이진 결과를 가지게 됩니다. 작업이 끝난 이후 결과에 대해서 Proof-of-Stake 컨센서스를 진행해, 2/3 이상의 득표를 얻은 결과가 해당 작업의 최종 결과로 선출됩니다.
+**Action** means the logic that a task performs with the required data. In previous example, the action could be a logic like “compare that the hash of downloaded data and the hash registered in blockchain is the same”. 
 
-만약 작업이 주관적 작업 (Subjective Task)이라면, 소수 의견에 해당하는 결과를 내놓은 노드들이 각자 걸어놓은 Stake를 잃지는 않습니다. 하지만 그렇지 않은 작업의 경우 **소수 의견 노드들은 각자 걸어놓은 Stake를 잃게 됩니다**. 객관적인 증명 (Proof)에는 정답이 있기 때문입니다. 다수 의견에 해당하는 노드들은 걸어놓은 Stake에 따라 블록 보상을 받아갈 수 있습니다.
+After the task is finished, it will produce a **Result**. The result will be binary – `PASS` or `FAIL`. The proof-of-stake consensus will be reached for the task result, and the result of the majority vote is elected to the result of the task. 
 
-### 라운드 (Round)
+If the task is *Subjective Task*, the nodes who gave minority answer about the task will not lose their stakes. But if it’s not the subjective task, **the minority nodes will lose their stakes** because there’s answer on the objective proof task. On the other hand, the majoriy nodes can get block reward proportional to their stakes. 
 
-이러한 작업은 주기적인 라운드에 따라 실행됩니다. 한 라운드에는 여러 개의 작업이 동시에 수행되며, 수행 기록은 블록에 검증 작업 기록으로서 저장됩니다. 한 라운드에 실행할 수 있는 최대 작업 개수는 블록 크기에 따라 결정됩니다. 한 라운드가 끝나면 AIR로 블록 보상이 부여되고, 노드들은 각자 건 Stake의 양에 비례해 블록 보상을 나눠가질 수 있습니다.
+### Round
+
+These tasks are executed periodically on the **Round**. On a round, multiple tasks can be executed and the task execution log will be saved as validation log on blockchain. After the round ends, nodes can get block reward in AIR, proportional to their stakes.
 
 ### ADT (Active Data Table)
 
-ADT(Active Data Table)은 데이터별로 수행해야 되는 작업의 목록입니다. 데이터별로 작업 큐가 있고, 작업 큐에는 수행해야 하는 작업과 그에 사용되는 필요 데이터가 들어갑니다. 특정 작업이 실행 조건을 만족하거나 외부의 작업 등록으로 인해 ADT에 작업이 추가된다면 해당 작업은 다음 라운드에 실행되게 됩니다.
+ADT (Active Data Table) is the list of tasks that should be performed per data. There’s task queue per data, and the task queue has tasks need to be performed and required data that will be used in tasks. If a task satisfies the run condition or registered manually, the task will be is added in the queue in ADT and will be executed in next round. 
 
-작업 등록을 하려면 작업 실행 주체(에어블록 컨트랙트, 수집자 등)는 일정량의 수수료를 내야 합니다. 이는 시빌 공격이나 DoS 공격을 방지하기 위함입니다. 작업 등록에 따른 수수료 부과 정책은 다음 버전의 기술 백서에서 자세히 다루어질 예정입니다.
+Task registrant must pay a certain amount of fee in order to register task. This is for preventing Sybil Attack or DoS attacks. The detailed fee policy for task registration will be described in the next version of the technical white paper.
 
-## 추가적으로 다뤄질 내용 (TBD, To Be Described)
 
-* **가공자에 대한 정량적 평가 방법.** 가공자들은 각자 주관적인 방법을 통해 데이터를 가공하기 때문에 객관적인 평가가 힘들다는 문제가 있습니다. 이를 평가하는 가장 확실한 방법은 컨슈머의 효용을 측정하는 것이므로 해당 데이터를 통한 ROAS (Return On Ad Spend)를 측정하는 것이지만 이는 에어블록이 정확히 측정하기 힘든 영역입니다. 간접적인 대안으로 Numerai [[6]](https://numer.ai/whitepaper.pdf), Enigma Catalyst [[7]](https://enigma.co/enigma_full.pdf)와 같이 주기적으로 학습 데이터를 통한 Competition을 개최해 그 결과를 바탕으로 가공자의 정확도를 평가하는 방법 등이 있습니다.
-* **컨슈머의 KYC.** 프로바이더가 컨슈머에게 안심하고 데이터를 판매하기 위해서는 최소한 컨슈머의 신원 확보를 통한 신뢰 보장이 이루어져야 합니다. 이에 대한 수단으로는 uPort [[2]](https://www.uport.me/) 등이 고려되고 있습니다.
-* **데이터의 수명.** 사용자의 개인 데이터는 결국 현 시점에서의 개인의 상태를 표현한 데이터이므로 개인의 상태가 바뀌는 순간 해당 데이터는 수명을 다하게 됩니다. 예를 들어 결혼 여부에 대해 미혼이라고 답한 데이터는 해당 사용자가 결혼을 하는 순간 잘못된 데이터가 됩니다.
-* **데이터 서비스.** 특정 앱이 수집한 데이터를 가공자가 데이터 서비스화하여 판매할 수 있습니다. 데이터 수에 따른 일괄 구매 방식이 아닌, 데이터 서비스를 구독하며 정기적으로 지불하는 토큰 양에 데이터의 종류 및 양이 비례하는 방식을 생각해볼 수 있습니다.
-* **가버넌스.** AIR 토큰은 에어블록 블록체인의 거버넌스에도 Voting Power로서 쓰일 수 있습니다. 자세히 어떠한 부분에 거버넌스가 적용될 수 있는지에 대한 내용은 추후 기술 백서를 통해 자세히 공개될 예정입니다.
+## To Be Described (TBD)
 
-## 참고문헌
+* **Evaluation methods for Refinery.** There is a problem that it is difficult to objectively evaluate refineries because they process the data through various subjective methods. The most accurate way to evaluate it is evaluating effect value of the data for data consumers, so measuring ROAS (Return On Ad Spent) would be the way but it is hard to measure for Airbloc. An indirect alternative would be holding a competition through learning data regularly, such as Numerai [[6]](https://numer.ai/whitepaper.pdf) or Enigma Catalyst [[7]](https://enigma.co/enigma_full.pdf), and evaluate the accuracy of the refineries based on the results.
+* **KYC of the Consumer.** In order for a provider to be able to sell data to a consumer with confidence, at least the trust of the consumer must be secured. uPort [[2]](https://uport.me) is being considered as a means for consumer KYC.
+* **Data Lifespan.** Since the user's personal data is the data that expresses the current status of the individual at the present time, the data will expire when the status of the user changes. For example, data that says the user is unmarried will become false data when the user marries.
+* **Governance.** Users get votes proportional to the amount of AIR they holding. We will provide details about the governance in the next version of the technical whitepaper.
+
+## Citations
 
 - [[1]](https://tokensale.civic.com/CivicTokenSaleWhitePaper.pdf) Civic Technologies. Civic, A Secured Identity For Everyone.
 - [[2]](https://www.uport.me/) uPort, Open Identity System for the Decentralized Web.
@@ -588,134 +582,14 @@ TO REAL WORLD
 Intelligence and Preventing Overfitting.
 - [[7]](https://enigma.co/enigma_full.pdf) Zyskind, Nathan, Pentland. Enigma: Decentralized Computation Platform with
 Guaranteed Privacy
-- [[8]](https://github.com/ethereum/EIPs/issues/859) Vitalik Buterin. EIP 859 - Account abstraction for main chain
-- [[9]](https://eos.io/documents/EOS_An_Introduction.pdf) Ian Grigg. EOS - An Introduction
 
-부록 (Appendix)
+
+Appendix
 ========
 
-## 고려사항
+## Considerations
+To be translated soon.
 
-### 데이터 경제 (Data Economics)
-데이터 특성 부여는 단순히 개인의 데이터에 대한 권리 회복을 의미하는 것 뿐만이 아니라, 에어블록 내 거래되는 데이터에 특수한 경제적 효과를 불러 일으킬 수 있습니다.
+## Direct Data Engineering
+To be translated soon.
 
-데이터의 도달 수명을 제한하는 것은 실물 세계에서의 감가상각과 비슷한 원리를 만들어냅니다. 시간이 지날수록 실물의 가치가 감소하는 것 처럼 에어블록에서의 데이터 가치 또한 재판매를 거칠수록 수명이 감소함으로서 가치가 하락합니다. 이는 데이터의 공급을 제한하는 효과를 불러올 수 있습니다.
-
-만약 각 주체간에 데이터의 무한한 재판매가 가능해진다면 공급 과잉으로 인해 데이터의 인플레이션이 발생하고, 데이터의 가치는 하락하게 됩니다. 하지만 도달 수명을 제한하는 것은 재판매에 한계를 둠으로써 에어블록 네트워크 내 공급을 조절하는 효과를 발생시킵니다.
-
-또한 사용자가 직접 데이터의 사용 범위를 제한할 수 있다는 점은 특정 종류 데이터의 희소성을 만들어냅니다. 사용자가 과도한 노출을 꺼리는 민감한 데이터일수록 사용자는 데이터의 도달 범위와 재판매 횟수를 제한하게 됩니다. 이는 해당 데이터의 공급을 감소시키므로 해당 종류의 데이터에 희소성을 만들어냄과 동시에 가격을 상승시키는 효과를 불러 일으킬 수 있습니다.
-
-
-### 데이터에 대한 기대 가격의 비대칭성
-개인과 광고주 간 데이터 거래의 가장 큰 문제는 개인이 기대하는 보상과 광고주가 기대하는 보상이 다르다는 점입니다. 개인에게 데이터 적정가가 1 ABL이라고 가정하고, 광고주에게는 10,000명의 데이터 적정가가 타 플랫폼과 비교했을 때 1,000 ABL이라고 가정해봅시다. 데이터 가격을 개인이 원하는 가격에 맞추면 광고주는 10,000 ABL이라는 비교적 비싼 가격을 지불해야 하고, 광고주가 원하는 가격에 맞추면 개인은 0.1 ABL의 보상밖에 받지 못합니다.
-
-하지만 데이터 거래는 실물과는 다른 속성이 존재합니다. 바로 데이터는 무형재로서 여러 번 팔릴 수 있다는 점입니다.
-
-수집자가 데이터를 개인 적정가에 맞춰서 구매한 다음 이를 여러 명의 광고주에게 광고주 적정가로 판매한다면 개인과 광고주에게 적정선의 가격을 제공할 수 있습니다. 그러나 이 방식은 수집자가 충분한 광고주의 수요가 없어서 손익분기점 달성에 실패하는 "데이터 재고" 현상이 일어날 리스크가 존재하므로 에어블록에서는 데이터 가격을 광고주가 원하는 저렴한 가격으로 맞추는 대신 데이터가 팔릴때마다 사용자에게 보상을 제공하는 Reward-Per-Sale 방식을 제공합니다.
-
-|   | 소비자 리스크  |  수집자 리스크  |
-|---|:-------:|:------:|
-| Reward-Once | 낮음 | 높음 |
-| Reward-Per-Sell | 높음 | 낮음 |
-| Hybrid | 중간 | 중간 |
-
-
-### 데이터 저장 방식
-에어블록은 자체적으로 데이터를 저장하지 않으며, 별도의 저장 수단을 마련하고 있지 않습니다. 데이터 저장 및 유지의 의무는 수집자가 가지며, 수집자는 어디에든 데이터를 저장할 수 있습니다. 에어블록은 해당 데이터의 URI를 저장하고 소유권을 구매한 컨슈머에게 제공해주는 역할만을 수행합니다. 수집자는 IPFS, Swarm, S3, HDFS등의 다양한 저장소를 사용할 수 있으며, 수집자는 데이터를 저장한 후 해당 데이터의 URI를 Aero에 등록하면 됩니다.
-
-자체적인 데이터 저장소가 없고 수집자에게 그 의무를 부과하는 것에 대해 중앙화 문제, 데이터 변조 문제, 데이터 가용성 문제가 제기될 수 있습니다. 그럼에도 에어블록이 이러한 접근법을 취한 이유는 자체 데이터 저장소를 운영하더라도 이러한 문제가 여전히 존재하기 때문입니다.
-
-에어블록이 중앙 데이터 저장소를 운영하면 중앙화 문제가 발생할 것이고 스토리지 노드들에 의해 유지되는 탈중앙화된 데이터 저장소를 운영하더라도 개별 노드들에 의한 변조 문제와 가용성 문제는 여전히 존재하기 때문에, 이에 대해 Filecoin과 같은 검증 및 증명 수단이 필요합니다.
-
-에어블록은 수집자에게 데이터 저장의 의무를 부과하고, Aero 네트워크를 통해 데이터의 가용성 및 온전성을 검증합니다. 이는 자체 데이터 저장 네트워크를 운영해도 결국 검증이 필요하기 때문입니다. 이는 역으로 검증이 있으면 자체 데이터 저장 네트워크는 필요가 없음에서 기인합니다. 또한 데이터를 판매해야 할 수집자가 데이터 저장소를 유지하는 것은 Data Generation Attack을 막는 효과가 있습니다.
-
-만약 데이터 소유권자의 필요에도 불구하고 데이터의 가용성이 보장되지 않거나 데이터의 변조 사실이 확인되었다면, 검증 시스템에 의해 수집자의 데이터 매물은 마켓플레이스에서 사라지고 수집자는 패널티를 받게 됩니다.
-
-> 데이터를 저장하고 유지할 여건이 되지 않는 수집자를 위해 에어블록 메인 마켓플레이스에서는 수집자를 위한 데이터 대리 저장 기능을 옵션으로 제공할 예정입니다. 이는 선택적이며, 에어블록 메인 마켓플레이스 저장소의 무조건적인 사용이나 중앙화를 의미하지는 않습니다.
-
-### 네트워크 수수료에 대한 고려사항
-에어블록은 개인 프로바이더의 입장에서 리워드 시스템으로 보여질 수 있습니다. 직접 데이터를 제공하고 간접 데이터 수집을 허가할 때 마다 일정량의 리워드를 받기 때문입니다.
-
-문제는 리워드를 받기 위해 데이터를 제공하려면 사용자 및 수집자와 서비스 레이어와의 인터렉션이 필요한데, 블록체인 위에 있는 서비스 레이어와의 인터렉션은 네트워크 수수료(Gas)를 요구합니다. 물론 네트워크 수수료는 기술적으로 Dapp과 블록체인 네트워크에 대한 시빌 공격 및 DoS 공격을 방지하기 위해서 꼭 필요한 존재입니다. 하지만 개인의 입장에서는 데이터 제공을 통해 받는 보상과 네트워크 수수료가 비슷하거나 더 커진다면 에어블록은 리워드 시스템으로서의 가치를 상실하게 되므로 문제가 됩니다.
-
-이 문제를 해결하는 방법으로 수집자가 데이터를 모아뒀다가 한번에 보냄으로써 수수료를 절약하는 Bufferring 방식이나, Dapp 서비스 프로바이더인 에어블록이 사용자들의 네트워크 수수료를 대신 지불하는 Fueling 방식이 있습니다. 후자의 경우 별도의 Fueling 서비스 없이도 Ethereum에서는 Constantinople을 통해
- EIP-859 [[8]](https://github.com/ethereum/EIPs/issues/859) 제안이 메인 네트워크에 반영되면 가스 지불 주체를 에어블록으로 변경함으로서 구현할 수 있습니다. 또한 Ethereum이 아니더라도, EOS.IO [[9]](https://eos.io/) 등의 블록체인 플랫폼을 사용하는 것도 현재 고려 대상에 있습니다.
-
-### Aero Network의 대체 가능성
-Aero 네트워크는 데이터를 검증하는 역할을 수행하는 외부 블록체인 네트워크이지만, 이 역할은 자체 네트워크를 개발 및 운영하지 않고 Enigma [[7]](https://enigma.co/enigma_full.pdf) 등의 탈중앙화 데이터 처리 프레임워크를 통해 대체할 수 있는 가능성이 존재합니다. Enigma는 Private MPC 플랫폼으로서, Secret Contract 등을 통해 데이터의 내용을 제 3자에게 노출하지 않으면서 데이터에 대한 MPC (Multi-Party Computation)가 가능한 프레임워크입니다. 이 부분은 추후에 Aero Network의 세부 스펙이 확정된 이후 시점에 검토할 예정입니다.
-
-## 직접 데이터 공학
-
-이 항목에서는 에어블록에서 고찰한 직접 데이터의 필요성과 간접 데이터와 구별되는 특징 및 한계점에 대해 자세히 서술합니다.
-
-### 광고 데이터의 속성
-
-오늘날의 디지털 광고에서 개인으로부터 수집할 수 있는 데이터 중 내재적으로 가치있는 데이터는 반드시 아래의 2가지 속성을 가집니다.
-
-1. 균질성
-2. 확실성
-
-**균질성**의 뜻은 어떤 데이터셋에 포함되어있는 속성 (Attribute)이 빈 칸이 없이 일정해야 한다는 뜻입니다. 예를 들어 안드로이드 모바일 디바이스에 설치된 앱 리스트는 모든 안드로이드 디바이스에서 예외없이 수집할 수 있다는 점에서 매우 균질성이 높은 데이터입니다. 균질성은 어떤 데이터 셋에 대한 선형적인 모델 자체의 예측 정확도를 높여주는 역할을 합니다.
-
-**확실성**의 뜻은 선형적인 모델을 통해 예측을 할 때 학습의 재료가 되는 데이터가 매우 정확하다는 것을 뜻합니다. 예를 들어 어떤 영화에 대한 특정인의 선호도를 알고자 할 때 “별점”이라는 확실한 정량화된 수단을 통해서 이를 평가합니다. 확실성은 비교적 높은 정확도를 가진 선형적인 모델에게 유사성을 판단할 수 있는 근거를 마련해줍니다.
-
-### 간접 데이터와 직접 데이터
-
-간접 데이터는 위에서 밝힌 균질성과 확실성 모두를 가지고 있다는 점에서 매우 내재적으로 가치 있는 데이터입니다. 모두에게서 프로그래밍적으로 자동으로 수집되기 때문에 균질성이 확보되고, 사용자의 거짓말이 보태질 수 없는 있는 그대로의 사실이기 때문에 확실한 데이터입니다.
-
-특히 간접 데이터는 데이터의 내재적 가치 밖에서 비즈니스적으로 정형성이라는 새로운 속성을 부여받습니다. 정형성은 곧 우리가 수집할 데이터의 스키마(형식)이 정해져 있다는 뜻입니다. 어떤 데이터를 어떤 형식으로 수집해야 할지가 정해져있다는 것입니다. 지난 20년간 디지털 광고업은 빠르게 발전해왔고, 머신러닝을 이용한 고도의 개인화 타겟팅 기법이 발전하게 되면서 Criteo와 같은 성공사례를 만들어내게 되었습니다. 데이터의 수집 주체와 활용 주체가 분리된 디지털 광고업의 특성 상 어떤 데이터를 수집해서 누구에게 어떤 데이터를 주어야할지가 오히려 표준화 되고 있습니다. 이러한 생태계의 특성 상 정형성은 디지털 광고 업의 간접 데이터가 지닌 뚜렷한 특징이 되었습니다.
-
-반면 직접 데이터의 경우 균질성과 확실성 모두 없으며, 정형성을 가지고 있지도 않습니다. 예를 들어 1,000만 명의 패널이 있다면, 이 1,000만 명에게 국가에서 Census 등을 실시하지 않는 한 도무지 균질한 데이터를 모을 방법이 없습니다. 어떤 사람의 어떤 데이터는 가지고 있는 데이터 특징이 어떤 사람의 데이터에는  없을 수도 있는 것입니다. 현재 IT 서비스가 균질한 데이터를 모을 수 있는 공간은 회원가입 시 특정 정보를 필수적으로 입력하게 하는 방법 뿐입니다.
-
-직접 데이터는 확실성을 갖지도 않습니다. 그 데이터의 진실성을 보장할 방법이 없기 때문입니다. 따라서 그 사람의 진술에 의존할 수밖에 없다는 한계를 가집니다. 예를 들어서 어떤 사람이 “나는 고양이를 키운다”라고 진술하여도 그것의 진실성을 증명하기가 결코 쉽지 않습니다. 이는 필연적으로 직접 데이터의 진실성, 즉 진실성을 증명할 수 있느냐의 확실성의 문제로 이어집니다.
-
-마지막으로 직접 데이터는 정형적이지 않습니다. 직접 데이터의 비정형성은 텍스트로 된 자연어에서부터 질문과 답으로 이뤄진 비교적 정형화된 데이터까지 그 정도가 다양합니다. 그러나 설령 질문과 답으로 이뤄진 문답이라고 데이터의 정형성이 그다지 높지 않습니다. 왜냐하면 질문과 그 대답의 형식이 항상 다르기 때문이며, 또한 그 질문에서 지칭하는 대상에 대한 의미론적인(Semantic) 구조 혹은 온톨로지가 합의되지 대부분 합의되지 않았기 때문입니다. 예를 들어 “고양이를 키우십니까?”라는 질문과 “고양이를 좋아하십니까?”는 완전히 다른 질문이 될 수 있습니다.
-
-### 직접 데이터의 필요성
-
-그럼 디지털 광고업에서는 균질성, 확실성, 그리고 심지어 정형성까지 갖추고 있는 직접 데이터만 필요하고 직접 데이터는 필요하지 않을까요? 그렇지 않습니다. 그 이유는 다시 “고양이를 키우는지 아닌지”의 질문으로 돌아가면 알 수 있습니다.
-
-자동으로 수집하는 간접 데이터로는 그 사람이 확실하게 고양이 쇼핑몰에 들어가고, 확실히 고양이 먹이를 샀고, 확실히 고양이 관련 앱을 자신의 디바이스에 설치하고 있다는 것은 알 수 있습니다. 그러나 이 이렇게 확실한 사실들로도 여전히 그 사람이 실제로 고양이를 키우는지는 아닌지는 알 수가 없습니다. 수의사일수도 있고, 애완동물 샵에서 일하는 직원일 수도 있습니다.
-
-설령 선형적인 모델을 통해서 추측하고 싶다고 해도 여전히 확실한 정답은 필요합니다. 그리고 확실한 정답을 얻기 위해서는 직접 물어보고, 그 물어본 대답이 진실성을 가지게 만들 수밖에 없습니다. 즉, 간접 데이터로 수집할 수 있는 데이터의 종류는 분명 한계가 있고, 어떤 종류의 데이터는 작은 양이라도 직접 물어봐서 확실히 수집할 수밖에 없다는 결론이 도출됩니다.
-
-또한 직접 물어본다고하더라도 그것을 믿을 수는 없으므로 확실하게 증명까지 끝내야 한다는 결론이 나옵니다. 만약 어떤 사람의 직접적인 진술이라고 해서 선형적인 모델에서 사용되는 예측의 재료로 사용한다면 이는 잘못된 예측의 결과로 이어질 수 있습니다.
-
-오늘날 디지털 광고 업계에서 우리는 비교적 풍부한 간접 데이터와 그 진술의 진실성이 비교적 확실하지도 않고, 양도 매우 적은 간접 데이터의 불균형적인 상태에 놓여있습니다. 이 생태계를 해결하는 것이 에어블록이 해결해야 할 문제입니다.
-
-
-### 직접 데이터의 최고의 가치는 확실성
-
-지금까지 데이터가 가질 수 있는 최상의 내재적 가치와 에어블록 네트워크에서 수집할 수 있는 데이터들의 종류와 그 특성에 대해서 살펴보았습니다. 이를 표로 정리하면 아래와 같습니다.
-
-| 데이터 속성 | 간접 데이터 | 직접 데이터 |
-|---------:|:---------:|:--------:|
-| 균질성   | 매우 높음 | 매우 낮음 |
-| 확실성   | 매우 높음 | 매우 낮음 |
-| 정형성   | 매우 높음 | 매우 낮음 |
-| 수집 가능 종류 | 적음 | 이론상 무한대 |
-
- 
-균질성, 확실성, 정형성을 확보하고 있는 간접 데이터는 수집 가능한 데이터의 종류가 아주 적고, 직접 데이터는 수집 가능한 종류가 매우 높음에도 불구하고 균질성, 확실성, 정형성의 측면에서 부족한 점이 많음을 알 수 있습니다.
-
-여기서 직접 데이터의 한 가지 속성이 확보된다면 아주 적은 양으로도 심지어 비정형적인 데이터라도, 또한 균질성이 일체 없이도 경제적인 가치를 가지게 되는데 이것은 확실성입니다. 직접 데이터의 확실성은 간접 데이터와의 상호작용을 통하여 그 모수를 늘려줄 수 있는 가능성을 가지고 있기 때문입니다.
-
-### 간접 데이터와 직접 데이터의 상호작용을 통한 모수 확대
-디지털 광고에서 가장 최상의 시나리오는 확실한 직접 데이터와 균질적이고 확실한 간접 데이터의 상호작용을 통한 모수의 확대입니다. 간접 데이터는 균질하고 확실한 데이터로 선형적인 모델 ㅡ 예컨대 그것이 머신러닝이나 통계학적 방법론일 때 ㅡ 작은 샘플만으로도 많은 모수에 대한 추측을 할 수 있게 해줍니다.
-
-Criteo나 개인화된 타겟팅 리타겟팅 광고의 원리도 이와 같습니다. 이들은 웹사이트에서의 사용자의 행동을 정형화시켜 간접 데이터의 형식으로 만듭니다. 웹사이트 진입, 검색, 상품 리스트 조회, 상품 상세페이지 조회, 상품 장바구니 담기, 상품 구매의 6개의 정형화된 이벤트를 기록합니다. 이렇게 수집된 간접 데이터는 모든 방문객들에 대해서 균질하게 기록되며 실제 사실이므로 확실한 데이터입니다. 여기서 특정 상품을 살 가능성을 모든 웹사이트 방문자들에 대해서 추측한다고 하면 그 특정 상품에 대한 기존 구매자들과 비슷한 사람들을 여태까지 수집한 간접 데이터에 선형적인 모델을 적용하여 찾기만 하면 됩니다.
-
-즉, 결론적으로 적은 양의 간접 데이터를 통해 많은 양의 모수를 찾아올 수 있는 것입니다. 이렇게 균질성있고 확실한 간접 데이터셋에 직접 데이터를 학습 재료 삼아서 모수를 확대하는 것을 유사타겟 엔진(Lookalike Audience Engine)이라 합니다. 예를 들어 페이스북은 1,000명 이상의 타겟만 가져온다면 그 타겟을 통하여 유사타겟을 만들어줍니다. 학습 데이터는 무조건 정확하여야 하고, 진실성이 있어야 합니다. 그래야지만 유사타겟 엔진을 통한 정확한 추측이 가능해진다는 결론으로 돌아오게 됩니다. 즉, 직접 데이터는 반드시 높은 확실성을 가지고 있어야 합니다. 
-
-### 확실한 데이터를 위한 증명
-이렇듯 몇 가지 논리를 통해 모든 직접 데이터는 반드시 확실한 데이터야만 합니다. 즉 그 데이터의 진실성으로 증명해야만 한다. 직접 데이터의 확실성은 그 직접 데이터를 제공하는 개인들에 의하여 총 3가지 방법을 통해서 증명될 수 있습니다.
-
-1. 형식적 증거를 통한 증명
-2. 자연어 진술을 통한 증명
-3. 형식적 진술을 통한 증명
-
-**형식적 증거**는 말 그대로 특정 진술을 증명하는 확실한 증거를 보여주는 것입니다. 예를 들어서 “고양이를 키우는지 아닌지”를 형식적으로 증명하는 방법은 자신이 키우는 고양이의 사진을 찍어서 보여주는 것입니다. 이 때 이 사진이 인터넷에서 퍼온 것이 아니라는 것이 증명된다면 이는 확실한 증거가 될 수 있습니다. 특정 회사에 다니고 있다는 것을 증명하려면 그 회사의 주소를 사용한 개인 이메일로 이메일을 보내서 인증을 할 수 있습니다. 특정 회사의 학생이라는 것을 알리려면 학생증을 찍어서 인증하면 됩니다. 이 방법은 비교적 확실한 대신 증명을 위해서 비교적 많은 자원과 시간이 소모된다는 단점을 가지고 있습니다.
-
-**자연어 진술을 통한 증명**은 특정 주제에 대해서 말 그대로 자연어적으로 진술을 하는 것입니다. 예를 들어서 “애완동물”이라는 주제에 대해서 진술을 하면 “나는 애완동물을 어릴적부터 키워왔다. 6살 때는 금붕어를 키웠고, 8살 때는 병아리를 키웠다. 한 동안 애완동물을 키우지 않았지만, 최근에 들어서는 고양이를 키우고 있습니다. “내 고양이는 …” 와 같은 식으로 자연어적 진술을 하는 것입니다. 이 진술은 형식적인 질문에 대한 대답보다는 신빙성을 가질 수 있으나 여전히 비교적 많은 자원과 시간이 소모된다는 단점을 가지고 있습니다.
-
-**형식적 진술을 통한 증명**은 주어진 질문에 대한 대답으로서 진술을 하고, 그것 자체가 증명을 하는 한 방식이 되는 경우입니다. 일반적인 설문조사가 형식적 진술을 통한 증명에 속한다고 볼 수 있습니다.
