@@ -78,7 +78,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 에어블록은 탈중앙화된 광고 데이터 거래 플랫폼입니다. 에어블록에서 광고 데이터 수집은 투명하게 이루어집니다. 간접 데이터는 에어블록이 직접 개발하거나 데이터 파트너십을 맺은 앱들로부터 개인 사용자가 직접 DAuth로 동의하는 절차를 거쳐 수집되며, 직접 데이터는 에어블록 클라이언트 앱에서 광고주가 데이터 캠페인을 통해 사용자에게 직접 질문하는 방식으로 수집됩니다. 이렇게 수집된 데이터는 가공자를 통해 광고 데이터의 형태로 가공되어 광고주에게 판매되고, 개인 사용자에게 데이터 판매금의 일부가 보상으로 지급됩니다.
 
-<p align="center"><img src="./assets/ecosystem-horizontal.png" width=720></p>
+<p align="center"><img src="../assets/ecosystem-horizontal.png" width=720></p>
 
 에어블록에서 **개인 사용자**는 데이터 제공자로서 데이터에 대한 정당한 보상과 통제권으로 자신의 데이터에 대한 주권을 가질 수 있습니다. 제공한 데이터가 어떻게 수집되고 누구에게 판매되며 어떻게 사용되는지 블록체인을 통해 투명하게 추적할 수 있으며, 수집된 데이터의 사용 권한이나 판매 레벨을 직접 제한할 수도 있습니다.
 
@@ -90,7 +90,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 에어블록은 데이터에 대한 *프로바이더*, *컨슈머*, *수집자*, *가공자*와 *검증자*의 참여를 통해 이루어집니다.
 
-<p align="center"><img src="./assets/stakeholders.png" width="700px"></p>
+<p align="center"><img src="../assets/stakeholders.png" width="700px"></p>
 
 * **프로바이더 (Provider)** 는 데이터를 제공하는 개인 사용자로, 데이터를 제공하고 소비자에게 보상을 받아가며 데이터 사용 및 유통에 대한 통제권을 지닙니다.
 * **수집자 (Collector)** 는 데이터를 수집해 대리 판매하는 앱으로, DAuth를 통해 간접 데이터를 수집하거나 질문을 통해 직접 데이터를 수집합니다.
@@ -104,7 +104,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 에어블록 아키텍쳐는 다음과 같은 레이어로 구성됩니다.
 
-<img align="right" src="./assets/architecture.png" style="margin:0 0 10px 20px;" width=400>
+<img align="right" src="../assets/architecture.png" style="margin:0 0 10px 20px;" width=400>
 
 * Application Layer: 에어블록을 사용하는 Dapp들로 에어블록 클라이언트, 에어블록 마켓플레이스 및 SDK 등이 포함됩니다.
 * API Layer: 에어블록과 통신할 수 있는 API 레이어입니다.
@@ -180,7 +180,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 기술적으로 봤을 때 특성은 유한 상태 기계(Finite State Machine)로 제한함수(Limit Function)와 전이함수(Transition Function), 상태(Status)로 구성됩니다. 제한함수는 데이터에 대한 특정 Action의 실행을 제한하는 조건을 정의하며, 전이함수는 특정 Action이 발생했을 때 상태를 변경시키는 상태전이함수입니다. 상태는 오직 전이함수만 변경시킬 수 있으며 이 함수들은 불변성을 지닙니다.
 
-<p align="center"><img src="./assets/traits-equation.png" width=280></p>
+<p align="center"><img src="../assets/traits-equation.png" width=280></p>
 
 예를 들어, 데이터의 재판매 횟수를 10번으로 제한한다고 하면, `ACTION_TRADE`라는 Action에 <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BT%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%2B%201">라는 특성함수를 만들고 <img src="https://latex.codecogs.com/svg.latex?%5Cmathbb%7BL%7D(s_%7Bcount%7D)%20%3D%20s_%7Bcount%7D%20%3E%2010"> 이란 제한함수를 만드는 방식으로 구현됩니다.
 
@@ -211,7 +211,7 @@ Without permission, anyone may use, reproduce or distribute any material in this
 
 ## 데이터 파이프라인 개요
 
-<p align="center"><img src="./assets/ecosystem-horiz-detailed.png" width=800></p>
+<p align="center"><img src="../assets/ecosystem-horiz-detailed.png" width=800></p>
 
 에어블록에서의 데이터는 다섯 주체를 거치며 일곱 과정의 SOIPRTC 파이프라인 (Source - cOllection - Ingestion - Persistence - Refining - Trading - Consumption)을 통해 컨슈머에게 전달됩니다. 사용자가 만든 데이터는 수집자에 의해 수집되어 검증자의 정제 (Cleansing) 후 수집자가 저장합니다. 가공자는 이를 가공해 마켓에서 데이터를 컨슈머에게 판매하게 됩니다. 
 
@@ -254,11 +254,11 @@ DAuth (DataAuth)는 에어블록에서 사용자의 데이터 수집 및 수익�
 수집자는 앱을 등록한 후, 에어블록 네트워크에 앱이 수집할 간접 데이터의 종류와 보상의 비율을 등록합니다. 수집할 데이터의 종류는 설치된 앱 리스트, 인앱 결제 내역 등이 될 수 있습니다. 그리고 데이터의 종류별로 보상을 설정하고, 사용자와 얼마의 비율로 분배할 것인지 설정합니다. 단, **앱은 최소 30% 이상의 수익을 사용자에게 분배해야 한다**는 조건이 있습니다. 이렇게 등록된 수집할 데이터와 보상 비율은 블록체인에 기록되며, DAuth 절차를 통해 사용자에게서 동의를 받게 됩니다.
 
 
-<p style="margin-top:40px;margin-bottom-20px;" align="center"><img src="./assets/dauth-pipeline.png" width=700></p>
+<p style="margin-top:40px;margin-bottom-20px;" align="center"><img src="../assets/dauth-pipeline.png" width=700></p>
 
 DAuth의 구체적인 절차는 다음과 같습니다.
 
-<img align="right" width=270 style="margin-left: 20px;" src="./assets/dauth-dialog.png">
+<img align="right" width=270 style="margin-left: 20px;" src="../assets/dauth-dialog.png">
 
 1. 애플리케이션에서 에어블록에 인증 절차 시작을 요청
 2. 에어블록에서 애플리케이션에게 요청 토큰을 발급
@@ -313,7 +313,7 @@ DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/k
 
 ## 데이터 올리기 (Data Ingestion)
 
-<p align="center"><img src="./assets/ingestion.png" width="700px"></p>
+<p align="center"><img src="../assets/ingestion.png" width="700px"></p>
 
 에어블록과 같은 데이터 시스템은 수많은 소스로부터 데이터를 가져올 때 데이터의 형식을 하나로 통합하고, 필요없는 부분을 삭제하는 클렌징 (Cleansing) 작업을 거쳐야 데이터를 다룰 수 있습니다. 이러한 가공 작업을 데이터 올리기 (Data Ingestion)이라고 합니다.
 
@@ -370,7 +370,7 @@ DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/k
 
 마켓플레이스는 수집된 직·간접 데이터 및 이를 가공한 데이터의 거래가 이루어지는 곳입니다. 마켓플레이스는 **데이터 마켓**과 **인사이트 마켓**이라는 두 가지 종류로 나뉩니다.
 
-<p align="center"><img src="./assets/marketplace.png" style="margin-top:20px; margin-bottom:20px;" width=700></p>
+<p align="center"><img src="../assets/marketplace.png" style="margin-top:20px; margin-bottom:20px;" width=700></p>
 
 **데이터 마켓** 에서는 개인 데이터의 판매가 이루어집니다. 데이터 마켓은 Raw 데이터 마켓과 개인 데이터 마켓으로 구성되는데, Raw 데이터 마켓에서는 수집자가 모은 데이터를 가공자를 거치지 않고 컨슈머에게 직접 판매합니다. 개인 데이터 마켓에서는 가공자가 가공한 개인 데이터를 판매합니다. 개인 데이터는 주로 사용자의 상태나 관심에 대해 가공자가 분석한 내용으로, 예를 들어 30대 여성이 키우는 애완동물의 종류에 대한 데이터가 될 수 있습니다.
 
@@ -397,7 +397,7 @@ DAuth는 OAuth의 Three-Legged Authorization [[3]](https://www.ibm.com/support/k
 가격은 일반적으로 수집자가 결정합니다. 물론 상대 거래 주체도 자신이 원하는 가격을 주장할 수 있게 흥정 (Bargaining) 기능을 제공하여 데이터의 가격이 시장에 의해서 적정 선으로 결정될 수 있게 합니다. 에어블록 네트워크에는 자체적으로 데이터의 적정 가격을 제시하는 기능이 없지만, 적정한 데이터 가격 형성을 위해 에어블록 메인 거래소 등의 프론트엔드 앱에서는 ABL 토큰의 지수이동평균 가격과 자체적인 데이터 가치 산정 알고리즘을 통해 적정가를 추천하는 기능을 제공할 예정입니다.
 
 ## 에어블록의 토큰 경제
-<p align="center"><img src="./assets/token-overview.png" width="650px" style="margin:30px;"></p>
+<p align="center"><img src="../assets/token-overview.png" width="650px" style="margin:30px;"></p>
 
 에어블록의 토큰은 **에어블록 (ABL)** 과 **에어블록 리워드 (AIR)** 로 나뉩니다. ABL은 ERC20 형태의 거래 가능한 토큰이며, AIR는 개인에게 귀속되어 **전송 및 거래가 불가능**한 대신 ABL로 1:1 교환만 가능한 토큰입니다.
 
@@ -421,7 +421,7 @@ AIR는 ABL로 1:1 교환이 가능합니다. AIR는 ABL로 교환하는 데에 �
 
 ### AIR Pool (에어블록 리워드 풀) 
 
-<p align="center"><img src="./assets/air-pool.png" width="660px" style="margin:20px;" ></p>
+<p align="center"><img src="../assets/air-pool.png" width="660px" style="margin:20px;" ></p>
 
 에어블록은 검증 과정에서 지급해야 할 리워드와 네트워크 수수료 등의 운영비를 충당하기 위하여 AIR Pool (에어블록 리워드 풀)을 유지합니다. 데이터를 거래할 때 부과되는 수수료, 가공자가 주기적으로 지불하는 데이터 사용권료 및 패널티로 인한 벌금 등은 AIR Pool에 쌓이며, 이는 후술할 검증자 및 신뢰도 마이닝 참여자에게 리워드로 주어질 수 있고 에어블록의 지속적인 운영을 위해 네트워크 수수료 등의 유지 비용으로 사용될 수 있습니다.
 
@@ -455,7 +455,7 @@ AIR Pool과 관련된 세부적인 수치는 개발 단계나 파일럿 테스�
 
 앞선 기능이 악의적인 참여자를 방지하기 위한 수단이라면, 개인 평가는 좋은 참여자를 평가하기 위한 수단입니다. 에어블록은 개인 평가를 통해 토큰 경제에 기반한 지표인 기여도와 참여도, 그리고 참여도별로 상대적인 기여도 순위를 매긴 지표인 명성을 부여합니다. 이 세 가지 지표는 특성에 따라 광고주나 가공자가 데이터 및 세그먼트를 선별할 때 참고 자료로 사용되거나, 네트워크에서 신뢰도 마이닝 대상을 선별할 때 사용될 수 있습니다.
 
-<p align="center"><img src="./assets/personal-evaluation.png" width="700px" style="margin-top:20px;margin-bottom:20px;"></p>
+<p align="center"><img src="../assets/personal-evaluation.png" width="700px" style="margin-top:20px;margin-bottom:20px;"></p>
 
 #### 기여도 (Contribution Level)
 
