@@ -4,10 +4,10 @@ Airbloc Technical White Paper
 *Hyojun Kim* [hyojun@airbloc.org]()  
 *Byeongsu Hong* [frostornge@airbloc.org]()
 
-**Version 1.1** First published on April 9, 2018.  
+**Version 1.1** published on April 12, 2018.  
 Copyright © 2018 Airbloc Foundation. All rights are reserved.
 
-Without permission, anyone may use, reproduce or distribute any material in this paper for non-commercial and educational use (i.e., other than for a fee or for commercial purposes) provided that the original source and the applicable copyright notice are cited.
+*Without permission, anyone may use, reproduce or distribute any material in this paper for non-commercial and educational use (i.e., other than for a fee or for commercial purposes) provided that the original source and the applicable copyright notice are cited.*
 
 ## Table of Contents
 
@@ -109,7 +109,7 @@ However, for decentralized systems, rules and regulations are laid out under the
 Airbloc is a decentralized system that guarantees a fair data transaction by rules and regulations. Even the Airbloc’s managing entity, the Airbloc Foundation, are just one out of many players to the ecosystem. The power to handle data is not and should not be yielded to one specific player, but should be equitably distributed to all Users and business entities. This is the ultimate value and reason for decentralization that Airbloc aims to achieve. The specific characteristics of Airbloc are as follows.
 
 
-#### Data Traceability
+#### Data Transparency
 
 All data transactions on Airbloc Network will be transparently tracked.
 
@@ -230,7 +230,7 @@ So far, overview on Airbloc data pipeline was addressed. The following sections 
 
 ## Data Collection
 
-On Airbloc, data is collected by the Apps. These Apps can monetize [Indirect Data](#indirect-data) and/or [Direct Data](#direct-data) collected by users in Airbloc. This does not mean a data monopoly on user’s app nor a violation to user’s personal data rights. Sales revenue is distributed to users at a fixed rate, and the user can choose the type and authority of the data that can be sold. In this regard, the App only shares the revenue with the user as a data sales agent
+On Airbloc, data is collected by the Apps. These Apps can monetize [Indirect Data](#indirect-data) and/or [Direct Data](#direct-data) collected by users in Airbloc. This does not mean a data monopoly on user’s app nor a violation to user’s personal data rights. Sales revenue is distributed to users at a fixed rate, and the user can choose the type and authority of the data that can be sold. In this regard, the App only shares the revenue with the user as a data sales agent.
 
 To collect data, Data Collectors should first register their App on Airbloc Network. For this, the **Data Collector is required to hold certain amount of ABL tokens in advance.** The maximum number of users that an App can upload on the Network proportionately increases in *log scale* to the ABL amount the App is holding. This is to prevent malicious apps from attacking the refinery and Marketplace through Sybil attacks and/or data generation attacks. The formula for the maximum number of users according to the App-held ABL tokens is as follows:
 
@@ -516,7 +516,7 @@ Data Cross-Validation is a system where Data Refinery can file a **claim** on a 
 
 When the Data Refinery files a claim, that data can no longer be sold. Furthermore, a single claim does not lower the Data Reliability or penalize the User. This is to prevent the Data Refinery from malicious abuse of the claim system. Eventually, the Data Refinery can’t sell the data that was filed with claim, so the supply of that data in the Marketplace is reduced, resulting in reduced amount of rewards to the User. 
 
-Nonetheless, to Users who have accumulated claims more than three times by two or more validators, the data reliability mining process can directly verify the data reliability and adjusts the data reliability in accordance with the reliability mining result.
+Nonetheless, to Users who have accumulated claims more than three times by two or more refineries, the data reliability mining process can directly verify the data reliability and adjusts the data reliability in accordance with the reliability mining result.
 
 ### Data Reliability Mining
 
